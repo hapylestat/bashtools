@@ -1,0 +1,5 @@
+%defattr(-,root,root,-)
+/usr/srv/_conf/nginx/
+/usr/srv/%{name}-%{version}/html/
+/usr/srv/%{name}-%{version}/sbin/
+/www/catch/

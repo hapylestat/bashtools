@@ -1,0 +1,10 @@
+Name:           nginx
+Version:        1.5.1
+Release:        sangou_0.1
+Summary:        HTTP Server
+
+Group:          hl_servers
+License:        GNU
+URL:            http://nginx.org
+Source0:        %{name}-%{version}.tar.gz
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}

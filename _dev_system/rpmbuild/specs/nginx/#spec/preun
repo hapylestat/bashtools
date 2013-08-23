@@ -1,0 +1,8 @@
+#remove daemon file
+
+systemctl stop %{name}.service
+rm -f /etc/systemd/system/%{name}.service
+rm -f /lib/systemd/system/%{name}.service
+systemctl daemon-reload
+
+

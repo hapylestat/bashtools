@@ -1,0 +1,1 @@
+./configure --prefix=/usr/srv/%{name}-%{version} --with-http_ssl_module --with-http_realip_module --with-http_dav_module --with-http_gzip_static_module --with-http_random_index_module --with-pcre --with-ipv6 --error-log-path=/usr/srv/lock/%{name}/error.log --conf-path=/usr/srv/_conf/%{name}/%{name}.conf

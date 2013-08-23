@@ -1,0 +1,11 @@
+rm -rf $RPM_BUILD_ROOT
+
+#build package
+make install DESTDIR=$RPM_BUILD_ROOT
+
+#add customized configuration
+cp -rf %{_sourcedir}/#source/cfg/* %{buildroot}/usr/srv/_conf/%{name}/
+
+#add custom error handler zone
+mkdir %{buildroot}/www
+cp -rf %{_sourcedir}/#source/www/* %{buildroot}/www/

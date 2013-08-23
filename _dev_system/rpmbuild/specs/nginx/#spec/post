@@ -1,0 +1,28 @@
+#tune configs for target host 
+sed -i "s/\[hostname\]/$HOSTNAME/g" /usr/srv/_conf/%{name}/*.*
+sed -i "s/\[wwwpath\]/\/www/g" /usr/srv/_conf/%{name}/*.*
+sed -i "s/\[configpath\]/\/usr\/srv\/_conf\/%{name}/g" /usr/srv/_conf/%{name}/*.*
+sed -i "s/\[lockpath\]/\/usr\/srv\/lock/g" /usr/srv/_conf/%{name}/*.*
+
+
+#add log directory
+mkdir /usr/srv/lock
+mkdir /usr/srv/lock/%{name}
+
+#register service
+rm -f /lib/systemd/system/%{name}.service
+echo  "[Unit]" >> /lib/systemd/system/%{name}.service
+echo  "Description=%{summary}" >>  /lib/systemd/system/%{name}.service
+echo  "After=syslog.target network.target" >> /lib/systemd/system/%{name}.service
+echo >>/lib/systemd/system/%{name}.service
+echo "[Service]" >>/lib/systemd/system/%{name}.service
+echo "Type=simple" >>/lib/systemd/system/%{name}.service
+echo "ExecStart=/usr/srv/%{name}-%{version}/sbin/%{name}" >>/lib/systemd/system/%{name}.service
+echo >>/lib/systemd/system/%{name}.service
+echo "[Install]" >>/lib/systemd/system/%{name}.service
+echo "WantedBy=multi-user.target" >>/lib/systemd/system/%{name}.service
+
+ln -s /lib/systemd/system/%{name}.service /etc/systemd/system/%{name}.service
+
+systemctl daemon-reload
+

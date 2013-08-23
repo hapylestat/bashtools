@@ -1,0 +1,23 @@
+   ######error handling
+                rewrite ^(.*)/error/n/(.*) $1/error/$2.html last;
+                rewrite ^(.*)/error/s/(.*) $1/error/pic/$2.css last;
+                rewrite ^(.*)/error/ig/(.*) $1/error/pic/$2.gif last;
+                rewrite ^(.*)/error/ij/(.*) $1/error/pic/$2.jpg last;
+                rewrite ^(.*)/error/ip/(.*) $1/error/pic/$2.png last;
+                
+                error_page 401 /error/n/403;
+	        error_page 403 /error/n/403;
+		error_page 404 /error/n/404;
+		error_page 502 /error/n/500;
+		error_page 500 /error/n/500;
+		error_page 400 /error/n/400;
+		
+		location ~ /error/(.*).(html|css|gif|jpg|png) {
+		 auth_basic off;
+		 root /usr/www/catch;
+		}
+		
+		#location ~ /error/pic/(main.css|warning.png|bground.jpg) {
+		# root /usr/www/catch;
+		#}
+   #####################

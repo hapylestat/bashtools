@@ -1,0 +1,96 @@
+h1 {
+  Color:#BA4343;
+  text-shadow:0px 1px 1px #e49c9c;
+  font-size: 25px;
+  font-family:Georgia, "Times New Roman", Times, serif
+}
+
+body {
+}
+
+.top_placeholder{
+ padding-top:15%;
+}
+
+.left_placeholder{
+/* padding-left:10%;*/
+}
+
+.clear{
+  clear:both;
+}
+
+.container{
+  height: 99%;
+}
+
+.box-items div{
+  float:left;
+}
+
+a{
+	color:#506985; 
+	text-decoration:none
+}
+a:hover {
+	color:#FF6600; 
+	border-bottom:1px dotted #FF6600
+}
+
+.plain-text {
+    text-align:center;
+	padding-left:60px;
+    padding-top: 10px;
+	font-size:14px; 
+	color:#666666; 
+	line-height:normal; 
+	text-shadow: 0px 1px 70px gray;
+
+}
+
+.box-wrap{
+  margin: 0 auto;
+  padding: 0;
+  width: 99%;
+  height: 99%;
+}
+
+.box-wrap-inner{
+  width:50%;
+  margin: 0 auto;
+  background-color:#FBFBFB;
+}
+
+img.icon{
+	width: 10px;
+	height: 10px;
+	border:none;
+
+}
+
+.infobox{
+  padding-top: 10%;
+ padding-left: 10%; 
+}
+
+.warning{
+ background-image: url('https://gate.sayme.eu.org/error/ip/warning');
+ background-repeat: no-repeat;
+ width: 250px;
+ height: 250px;
+}
+
+.error{
+ background-image: url('https://gate.sayme.eu.org/error/ip/error');
+ background-repeat: no-repeat;
+ width: 300px;
+ height: 300px;
+}
+
+.info{
+ margin-top: 7%;
+ background-image: url('https://gate.sayme.eu.org/error/ip/info');
+ background-repeat: no-repeat;
+ width: 150px;
+ height: 150px;
+}
