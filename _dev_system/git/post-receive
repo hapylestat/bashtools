@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#GIT_PROJECT_ROOT=/usr/srv/_bin/git-data
+WEBDIR=/www/sangou.sayme.eu.org/sec
+HASHFILE=.lastgit_hash
+REPO=testweb
+LOCALREPO=testbox
+
+cd $GIT_PROJECT_ROOT/$REPO
+GITMSG=`git log -b master -n 1 --pretty=format:'%s'`
+GITHASH=`git log -b master -n 1 --pretty=format:'%H'`
+if [ "$GITMSG" == "publish" ]; then
+ if [ -f $WEBDIR/$HASHFILE ]; then
+  LASTHASH=`cat $WEBDIR/$HASHFILE`
+ else 
+  LASTHASH=0
+ fi
+
+ if [ "$LASTHASH" != "$GITHASH" ]; then
+  echo $GITHASH>$WEBDIR/$HASHFILE
+   rm -rf $WEBDIR/$LOCALREPO
+  cd $WEBDIR
+  git clone -b master file://localhost$GIT_PROJECT_ROOT/$REPO $LOCALREPO 1>/dev/null 2>&1
+ fi
+ 
+
+fi
+
+exit 0

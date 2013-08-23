@@ -1,0 +1,109 @@
+#!/bin/bash
+YT_PLLIST=https://gdata.youtube.com/feeds/api/users/${YT_ID}/playlists?v=2
+YT_FEED=/tmp
+#web builder of command line: gdata.youtube.com/demo/index.html
+#Tip: seems max limit per 1e output is 50 items
+YT_Q_MAXREULTS="max-results"
+YT_Q_START="start-index"
+YT_MAX_LIST=50
+
+yt_init(){
+ YT_FEED=$(mktemp)
+}
+
+
+yt_cleanup(){
+ if [ -f $YT_FEED ]; then
+   rm -f $YT_FEED
+ fi
+}
+
+#fix feed for reading by xmlstarlet
+#$1 path of file
+yt_transformfeed(){
+    cat $1 | sed "s| xmlns='[^']*'||" > $1.1
+    mv -f $1.1 $1  1>/dev/null 2>&1
+}
+
+# $1 - link
+yt_loadfeed(){
+  wget -O $YT_FEED $1 1>/dev/null 2>&1
+  if [ $? == 0 ];then
+    yt_transformfeed $YT_FEED
+  fi
+  return $?
+}
+
+# $1 - optional, parse main feed or custom
+# Result - array of list items separated  by ';'. Consider to change IFS
+yt_getplids(){
+  if [ -z $1 ]; then
+    return_s `xmlstarlet sel -t -m "/feed/entry" -v ./yt:playlistId -n $YT_FEED|tr '\n' ';'`
+  else
+    return_s `xmlstarlet sel -t -m "/feed/entry" -v ./yt:playlistId -n $1|tr '\n' ';'`
+  fi
+}
+
+
+# $1 - sel item name ( -t /entry/content )
+# $2 - sel value  ( -v @src )
+# $3 - Plylist ID
+# $4 - pl local link
+yt_getplitem(){
+   return_s `xmlstarlet sel -t -c "/feed/entry[yt:playlistId='$3']" $4 | xmlstarlet sel -t -m "$1" -v "$2"`
+}
+
+
+#==================================================properties
+# all
+#---------------
+# $1 - pl id
+# $2 - optional, parse main feed or custom
+
+yt_getpltitle(){
+  if [ -z $2 ]; then
+     return_s $(yt_getplitem "/entry" "title" $1 $YT_FEED)
+  else
+     return_s $(yt_getplitem "/entry" "title" $1 $2)
+  fi
+}
+
+yt_getpllink(){
+  if [ -z $2 ]; then
+     return_s $(yt_getplitem "/entry/content" "@src" $1 $YT_FEED)
+  else
+     return_s $(yt_getplitem "/entry/content" "@src" $1 $2)
+  fi
+}
+
+yt_getpl_itemscount(){
+  if [ -z $2 ]; then
+     return_s $(yt_getplitem "/entry" "yt:countHint" $1 $YT_FEED)
+  else
+     return_s $(yt_getplitem "/entry" "yt:countHint" $1 $2)
+  fi
+}
+
+
+#===========end properties
+
+# $1 - url path to feed
+# return path to downloaded feed
+yt_loaddynfeed(){
+   tmp=$(mktemp)
+   wget -O $tmp $1 1>/dev/null 2>&1
+   if [ $? == 0 ]; then
+     yt_transformfeed $tmp
+     echo -n $tmp
+   fi
+}
+
+# $1 - path to temp feed
+yt_freedynfeed(){
+ if [ ! -z $1 ]; then
+  if [ -f $1 ]; then
+    rm -f $1
+  fi
+ fi 
+}
+

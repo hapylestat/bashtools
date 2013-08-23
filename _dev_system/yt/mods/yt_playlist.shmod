@@ -1,0 +1,49 @@
+#!/bin/bash
+getplaylists(){
+
+yt_init
+yt_loadfeed $YT_PLLIST
+
+#down youtube lits
+
+tmpl=$(yt_getplids)
+
+#set ';' as delimiter
+TMP_IFS=$IFS
+IFS=$';'
+for litem in $tmpl ; do
+  if [ "$litem" !=  "" ]; then
+   write_header "$(yt_getpltitle "$litem")"
+   
+   write_item "Link" "$(yt_getpllink "$litem")"
+   write_item "Count" "$(yt_getpl_itemscount "$litem")"
+  fi
+done
+#back to prev. delimiter
+IFS=$TMP_IFS
+
+yt_cleanup
+}
+
+getplaylistitems(){
+ if [ ! -z $1 ]; then
+   yt_init
+   yt_loadfeed $YT_PLLIST
+
+   pl_c_feed=$(yt_getpllink "$1")
+   #down list to temp dir
+   pl_c_feed_local=$(yt_loaddynfeed $pl_c_feed)
+   tmpl=$(yt_getpllist $pl_c_feed_local)
+   TMP_IFS=$IFS
+   IFS=$';'
+   for litem in $tmpl ; do
+     if [ "$litem" != "" ]; then
+       echo $litem
+     fi
+   done
+    IFS=$TMP_IFS
+   yt_freedynfeed $pl_c_feed_local
+
+   yt_cleanup
+ fi
+}

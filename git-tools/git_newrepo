@@ -1,0 +1,51 @@
+#!/bin/bash 
+######################################
+#            Shell script            #
+# Author: H.L.                       #
+# TPL Version: 0.1                   #
+######################################
+
+#========================Global variables
+APPVER="0.1b"
+MYDIR=`echo $0`
+FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
+MYDIR=${MYDIR%%/$FILENAME}
+STARTDIR=`pwd`
+GITUSER=nginx
+GITGROUP=netservices
+#=======================Include base library
+
+. $MYDIR/functions.shinc
+
+REPONAME=$1
+
+echo -e "${COLOR_LIME}GIT Helper Tool $APPVER....${COLOR_END}"
+#====ask user for reponame if none was passed
+if [ "$REPONAME" == "" ];then
+ REPLY=""
+ echo -n "Provide repo name:" && read -r
+ if [ "$REPLY" == "" ]; then
+  write_error "No name was provided"
+  exit 1
+ fi
+ REPONAME=$REPLY
+fi
+
+
+#====check if folder allready exists
+if [ -d $STARTDIR/$REPONAME ]; then
+ write_error "Repository/Directory allready exists..."
+ exit 1
+fi
+
+run "mkdir $REPONAME" "Create directory"
+
+switch_dir "$STARTDIR/$REPONAME"
+  run "git --bare init" "Initialize repository"
+  run "git config --file config http.receivepack true" "Configure repository"
+switch_dir
+
+run "chown -R ${GITUSER}:${GITGROUP} $STARTDIR/$REPONAME && chmod -R 775 $STARTDIR/$REPONAME" "Apply security changes"
+
+
+

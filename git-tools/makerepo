@@ -1,0 +1,9 @@
+#!/bin/bash
+
+mkdir $1
+cd $1
+git --bare init
+git config --file config http.receivepack true
+cd ..
+chown -R nginx:netservices $1
+chmod -R 775 $1
