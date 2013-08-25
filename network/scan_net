@@ -1,0 +1,33 @@
+#!/bin/sh
+NET=1.1.1.
+FROM=2
+TO=254
+IF=eth1
+sSTOP=0
+
+control_c(){
+ echo Catch interrupt signal, aborting...
+ sSTOP=1
+}
+
+ping_a(){
+ arping -I $1 $2 -c 1 1>/dev/null 2>&1
+ if [ $? -eq 0 ]; then
+  echo "${NET}$c" >>/tmp/png
+ fi 
+}
+
+trap control_c SIGINT
+rm -f /tmp/png 1>/dev/null 2>&1
+
+for ((c=$FROM; c <= $TO && $sSTOP == 0; c = c + 1)); do
+ ping_a "${IF}" "${NET}$c" &
+done
+
+wait
+
+if [ -f /tmp/png ]; then
+  cat /tmp/png
+else
+ echo "No hosts found"
+fi
