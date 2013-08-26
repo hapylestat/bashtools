@@ -25,6 +25,16 @@ run "tar -xf $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Prepare source"
 run "tar -xf $srvDOWNDIR/$DEPNAME1-$DEPVER1.tar.gz" "Prepare dependency source"
 switch_dir
 
+#workaround for compilation openssl package(on rawhide with latest perl)
+rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/apps/cms.pod
+rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/apps/smime.pod
+rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/crypto/X509_STORE_CTX_get_error.pod
+rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/*.pod
+echo "=pod" > $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/temp.pod
+echo "=cut" >> $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/temp.pod
+#======
+
+
 run "rm -rf $srvDIR/$APPNAME && rm -rf $srvBINDIR/$APPNAME-$APPVER" "Cleanup...."
 run "mkdir $srvBINDIR/$APPNAME-$APPVER && ln -s $srvBINDIR/$APPNAME-$APPVER $srvDIR/$APPNAME" "Make links"
 
