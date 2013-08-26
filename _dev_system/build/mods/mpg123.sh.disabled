@@ -1,7 +1,5 @@
 #!/bin/bash
 
-include /etc/system.conf
-
 APPNAME=mpg123
 APPVER=1.15.4
 

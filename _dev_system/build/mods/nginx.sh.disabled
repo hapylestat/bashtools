@@ -1,7 +1,5 @@
 #!/bin/bash
 
-include /etc/system.conf
-
 APPNAME=nginx
 APPVER=1.5.3
 DEPNAME1=openssl

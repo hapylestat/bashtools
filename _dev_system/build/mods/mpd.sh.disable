@@ -1,7 +1,5 @@
 #!/bin/bash
 
-include /etc/system.conf
-
 APPNAME=mpd
 APPVER=0.17.5
 DEPNAME1=ffmpeg

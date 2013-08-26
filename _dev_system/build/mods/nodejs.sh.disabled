@@ -1,7 +1,5 @@
 #!/bin/bash
 
-include /etc/system.conf
-
 APPNAME=node
 APPVER=v0.10.13
 

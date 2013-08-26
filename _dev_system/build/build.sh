@@ -14,6 +14,8 @@ MYDIR=${MYDIR%%/$FILENAME}
 
 . $MYDIR/functions.shinc
 
+include  /etc/system.conf
+
 EXITONERROR=1
 #=============callbacks
 

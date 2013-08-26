@@ -1,7 +1,5 @@
 #!/bin/bash
 
-include /etc/system.conf
-
 APPNAME=php
 APPVER=5.5.0
 
