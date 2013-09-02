@@ -4,7 +4,7 @@ APPNAME=zabbix
 APPVER=2.1.3
 
 #build server 
-$OPTIONS="--enable-server --enable-agent --with-mysql=$srvDIR/mysql/bin/mysql_config"
+OPTIONS="--enable-server --enable-agent --with-mysql=$srvDIR/mysql/bin/mysql_config"
 
 #build client only
 #$OTIONS="--enable-agent"
