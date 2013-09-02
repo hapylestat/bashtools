@@ -3,7 +3,7 @@
 APPNAME=mpg123
 APPVER=1.15.4
 
-if [ ! -f $srvDOWNDIR/$APPNAME-$APPVER.tar.gz ]; then
+if [ ! -f $srvDOWNDIR/$APPNAME-$APPVER.tar.bz2 ]; then
  run "wget http://www.mpg123.de/download/$APPNAME-$APPVER.tar.bz2 -O $srvDOWNDIR/$APPNAME-$APPVER.tar.bz2" "Download source"
 else
  echo "Source downloading skipped as allready downloaded"
