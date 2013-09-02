@@ -258,8 +258,12 @@ service_install(){
  
  echo "Type=$STYPE" >>$TMPFILE
  echo "ExecStart=$2" >>$TMPFILE
- echo "ExecReload=/bin/kill -s HUP \$MAINPID" >>$TMPFILE
- echo "ExecStop=/bin/kill -s QUIT \$MAINPID" >>$TMPFILE
+ if [ "$STYPE" == "oneshot" ]; then
+  echo "RemainAfterExit=yes" >> $TMPFILE
+ else
+  echo "ExecReload=/bin/kill -s HUP \$MAINPID" >>$TMPFILE
+  echo "ExecStop=/bin/kill -s QUIT \$MAINPID" >>$TMPFILE
+ fi
  echo >>$TMPFILE
  echo "[Install]" >>$TMPFILE
  echo "WantedBy=multi-user.target" >>$TMPFILE
