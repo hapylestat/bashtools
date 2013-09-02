@@ -30,8 +30,8 @@ run "./configure --prefix=$srvDIR/$APPNAME --enable-ipv6 ${OPTIONS}" "Make confi
 
 
 run "make" "Compile project"
-#run "make install" "Install project"
-#switch_dir
+run "make install" "Install project"
+switch_dir
 
 
 
