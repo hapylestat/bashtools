@@ -3,10 +3,9 @@
 APPNAME=zabbix
 APPVER=2.1.3
 
-zabbix/ZABBIX%20Latest%20Stable/2.0.8/zabbix-2.0.8.tar.gz
 
 if [ ! -f $srvDOWNDIR/$APPNAME-$APPVER.tar.gz ]; then
- run "wget http://heanet.dl.sourceforge.net/project/$APPNAME/ZABBIX%20Latest%20Development/$APPNAME-$APPVER.tar.gz -O $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Download source"
+ run "wget \"http://heanet.dl.sourceforge.net/project/$APPNAME/ZABBIX Latest Development/$APPVER/$APPNAME-$APPVER.tar.gz\" -O $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Download source"
 else
  echo "Source downloading skipped as allready downloaded"
 fi
