@@ -21,7 +21,7 @@ run "mkdir $srvBINDIR/$APPNAME-$APPVER && ln -s $srvBINDIR/$APPNAME-$APPVER $srv
 switch_dir $srvDOWNDIR/$APPNAME-$APPVER
 
 run "./configure --prefix=$srvDIR/$APPNAME --with-config-file-path=$srvCONFDIR/$APPNAME --with-config-file-scan-dir=$srvCONFDIR/$APPNAME/ini --enable-fpm 
---with-mysql=/usr/srv/mysql --with-zlib --with-gd --enable-mbstring --enable-inline-optimization --disable-debug --enable-ipv6 --without-curl --with-jpeg-dir --disable-rpath --with-gettext --enable-bcmath 
+--with-mysql=/usr/srv/mysql --with-zlib --with-gd --enavble--sysvsem --enable-sysvmsg --enable-sysvshm --enable-mbstring --enable-inline-optimization --disable-debug --enable-ipv6 --without-curl --with-jpeg-dir --disable-rpath --with-gettext --enable-bcmath 
 --disable-inifile --disable-flatfile --without-cdb --with-freetype-dir --enable-sockets --with-bz2 --enable-ftp --enable-zip --with-mcrypt --with-xmlrpc --with-openssl --enable-opcache=no" "Configuring project"
 
 run "make" "Compile project"
