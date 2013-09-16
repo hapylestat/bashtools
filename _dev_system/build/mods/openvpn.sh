@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#require:
+# - liblzo
+# - pam-devel
+#---------------
+
+APPNAME=openvpn
+APPVER=2.3.2
+
+if [ ! -f $srvDOWNDIR/$APPNAME-$APPVER.tar.gz ]; then
+ run "wget http://swupdate.openvpn.org/community/releases/$APPNAME-$APPVER.tar.gz -O $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Download source"
+else
+ echo "Source downloading skipped as allready downloaded"
+fi
+
+switch_dir $srvDOWNDIR
+run "tar -xf $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Prepare source"
+switch_dir
+
+run "rm -rf $srvDIR/$APPNAME && rm -rf $srvBINDIR/$APPNAME-$APPVER" "Cleanup...."
+run "mkdir $srvBINDIR/$APPNAME-$APPVER && ln -s $srvBINDIR/$APPNAME-$APPVER $srvDIR/$APPNAME" "Make links"
+
+
+switch_dir $srvDOWNDIR/$APPNAME-$APPVER
+
+run "./configure --prefix=$srvDIR/$APPNAME --enable-systemd --sysconfdir=/$srvCONFDIR/$APPNAME" "Make configuration"
+
+
+run "make" "Compile project"
+run "make install" "Install project"
+switch_dir
+
+
+
