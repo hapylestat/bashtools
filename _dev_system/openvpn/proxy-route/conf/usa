@@ -1,5 +1,5 @@
 #!/bin/bash
 
 ROUTETABLE=proxyUSA
-ROUTEDEV=tapSangouUSA
+ROUTEDEV=tapAliceUSA
 ROUTEGW=2.3.2.1
