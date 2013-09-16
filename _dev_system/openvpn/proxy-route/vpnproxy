@@ -25,7 +25,7 @@ echo -e "${COLOR_LIME}$FILENAME, $APPVER.... ${COLOR_END}"
 #=====================main functions
 #help about using of script
 help(){
-  echo $"Usage: $prog {start|stop|list}"
+  echo $"Usage: $FILENAME {start|stop|list|help} {profile}"
 }
 
 #base actions
@@ -35,7 +35,7 @@ do_actions(){
  PROXY=$2
  if [ ! -e $MYDIR/conf/$PROXY ]; then
   write_error "[!] Proxy profile $2 not found."
-  break;
+  return 1
  else
   write_info "Using profile $2..."
  fi
@@ -43,14 +43,26 @@ do_actions(){
   include "conf/$PROXY"
 
   case "$1" in
-    start)
+    start)     
+     if [ "$PROXY" == "" ]; then
+       write_error "[!] No profile passed"
+       return 1
+     fi
      route_client $ROUTETABLE $ROUTEDEV $ROUTEGW
     ;;  
     stop)
+     if [ "$PROXY" == "" ]; then 
+       write_error "[!] No profile passed"
+       return 1
+     fi
      unroute_client $ROUTETABLE $ROUTEDEV $ROUTEGW
      ;;
     list)
-     list $ROUTETABLE $ROUTEDEV $ROUTEGW
+      if [ "$PROXY" == "" ]; then
+        list_all
+      else
+        list $ROUTETABLE $ROUTEDEV $ROUTEGW
+      fi
      ;;
     *)
     help
@@ -93,12 +105,28 @@ list(){
  echo "--------------------------------"
  
  LIST=`ip rule list|grep $ROUTETABLE`
+ 
+ switch_delimiter '#'
  for item in $LIST
  do
    echo $item | cut -d " " -f 2
  done
+ switch_delimiter
+ 
  #ip route list table $ROUTETABLE
  echo
+}
+
+#list available profiles
+list_all(){
+ echo 
+ echo "List(profiles):"
+ echo "--------------------------------"
+ list=`ls $MYDIR/conf`
+ for item in $list
+ do
+  echo $item
+ done
 }
 
 
