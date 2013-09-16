@@ -1,0 +1,116 @@
+#!/bin/bash 
+######################################
+#            Shell script            #
+# Author: H.L.                       #
+# TPL Version: 0.1                   #
+######################################
+
+#========================Global variables
+APPVER="0.1b"
+MYDIR=`echo $0`
+FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
+MYDIR=${MYDIR%%/$FILENAME}
+#=======================Include base library
+
+. /etc/system.conf
+. $srvDIR/_dev_system/functions
+
+CLIENTIP=$(get_ssh_ip)
+
+echo -e "${COLOR_LIME}$FILENAME, $APPVER.... ${COLOR_END}"
+#echo -e "${COLOR_RED}Client ip: ${CLIENTIP} ${COLOR_END}"
+
+
+
+#=====================main functions
+#help about using of script
+help(){
+  echo $"Usage: $prog {start|stop|list}"
+}
+
+#base actions
+#$1 action
+#$2 name
+do_actions(){
+ PROXY=$2
+ if [ ! -e $MYDIR/conf/$PROXY ]; then
+  write_error "[!] Proxy profile $2 not found."
+  break;
+ else
+  write_info "Using profile $2..."
+ fi
+
+  include "conf/$PROXY"
+
+  case "$1" in
+    start)
+     route_client $ROUTETABLE $ROUTEDEV $ROUTEGW
+    ;;  
+    stop)
+     unroute_client $ROUTETABLE $ROUTEDEV $ROUTEGW
+     ;;
+    list)
+     list $ROUTETABLE $ROUTEDEV $ROUTEGW
+     ;;
+    *)
+    help
+  esac
+}
+
+#====================================
+
+# 1:  routetable
+# 2:  routedev
+# 3:  routegw
+route_client(){
+ ROUTETABLE=$1
+ ROUTEDEV=$2
+ ROUTEGW=$3
+ run "ip rule add from $CLIENTIP table $ROUTETABLE" "Add source ip"
+ run "ip route add default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Add source rule"
+}
+
+# 1:  routetable
+# 2:  routedev
+# 3:  routegw
+unroute_client(){
+ ROUTETABLE=$1
+ ROUTEDEV=$2
+ ROUTEGW=$3
+ run "ip route del default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Del source rule"
+ run "ip rule del from $CLIENTIP table $ROUTETABLE" "Del source ip"
+}
+
+# 1:  routetable
+# 2:  routedev
+# 3:  routegw
+list(){
+ ROUTETABLE=$1
+ ROUTEDEV=$2
+ ROUTEGW=$3
+ echo 
+ echo "List(active):"
+ echo "--------------------------------"
+ 
+ LIST=`ip rule list|grep $ROUTETABLE`
+ for item in $LIST
+ do
+   echo $item | cut -d " " -f 2
+ done
+ #ip route list table $ROUTETABLE
+ echo
+}
+
+
+
+#===================================check params
+
+case "$1" in
+  help)
+  help
+  ;;  
+  *)
+  do_actions "$1" "$2"
+esac
+
+

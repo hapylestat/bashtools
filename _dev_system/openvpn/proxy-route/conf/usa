@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ROUTETABLE=proxyUSA
+ROUTEDEV=tapSangouUSA
+ROUTEGW=2.3.2.1

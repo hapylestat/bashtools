@@ -64,8 +64,16 @@ write_error() {
   MSG=$1
  fi
  echo -e "${COLOR_RED}$MSG${COLOR_END}"
-
 }
+
+write_info() {
+ MSG="Error appears"
+ if [ ! -z "$1" ]; then
+  MSG=$1
+ fi
+ echo -e "${COLOR_ITEM}$MSG${COLOR_END}"
+}
+
 # ==> switch to selected dir with possibility to switch back
 # $1 - switch to dir/blank. If blank, func will try to switch back
 switch_dir(){
