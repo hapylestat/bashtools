@@ -1,0 +1,8 @@
+#!/bin/bash
+
+ADDR=`cat usa.range`
+
+for item in $ADDR
+do
+  route del -net $item gw 2.3.2.1 metric 10 1>/dev/null 2>&1
+done

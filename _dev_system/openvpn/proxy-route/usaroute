@@ -1,0 +1,47 @@
+#!/bin/bash 
+######################################
+#            Shell script            #
+# Author: H.L.                       #
+# TPL Version: 0.1                   #
+######################################
+
+#========================Global variables
+APPVER="0.1b"
+MYDIR=`echo $0`
+FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
+MYDIR=${MYDIR%%/$FILENAME}
+#=======================Include base library
+
+. /etc/system.conf
+. $srvDIR/_dev_system/functions
+
+CLIENTIP=$(get_ssh_ip)
+
+echo -e "${COLOR_LIME}USA Route script.... ${COLOR_END}"
+echo -e "${COLOR_RED}Client ip: ${CLIENTIP} ${COLOR_END}"
+
+
+start(){
+ run "ip rule add from $CLIENTIP table 55" "Add source ip"
+ run "ip route add default table 55 via 2.3.2.1 dev tapAliceUSA" "Add source rule"
+}
+
+stop(){
+ run "ip route del default table 55 via 2.3.2.1 dev tapAliceUSA" "Del source rule"
+ run "ip rule del from $CLIENTIP table 55" "Del source ip"
+}
+
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  *)
+	echo $"Usage: $prog {start|stop}"
+	RETVAL=3
+esac
+
+

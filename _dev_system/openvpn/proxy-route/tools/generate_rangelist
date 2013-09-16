@@ -1,0 +1,19 @@
+#!/bin/bash
+
+LOC=`pwd`
+
+
+wget http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip
+unzip GeoIPCountryCSV.zip
+cat GeoIPCountryWhois.csv|grep \"US\" >filtered
+perl geo2nginx.pl < filtered >filtered.list
+cat filtered.list|cut -f 1 -d " " >usa.range
+
+rm -f filtered
+rm -f GeoIPCountryCSV.zip
+rm -f GeoIPCountryWhois.csv
+rm -f filtered.list
+
+
+
+
