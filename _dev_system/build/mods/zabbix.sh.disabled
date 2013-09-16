@@ -6,12 +6,25 @@ APPVER=2.1.3
 #application mode (server/client)
 MODE="server"
 
+#mysql/sqlite
+DATABASE="mysql"
+
+#==[option builder]=============================================
+case "$DATABASE" in
+  mysql)
+    DATABASE="--with-mysql=$srvDIR/mysql/bin/mysql_config"
+    ;;
+  sqlite)
+   DATABASE="--with-sqlite3"
+   ;;  
+esac
+
 if [ "$MODE" == "server" ]; then
- OPTIONS="--enable-server --enable-agent --with-mysql=$srvDIR/mysql/bin/mysql_config --with-sqlite3"
+ OPTIONS="--enable-server --enable-agent $DATABASE"
 else
  OPTIONS="--enable-agent"
 fi
-
+#===============================================================
 
 
 
