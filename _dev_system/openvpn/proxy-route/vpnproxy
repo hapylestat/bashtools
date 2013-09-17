@@ -110,8 +110,8 @@ list(){
  CN=0
  for item in $LIST
  do
-	write_item "$CN" `$item | cut -d " " -f 2`
-   $CN=$((CN+1))
+	write_item "$CN" `echo $item | cut -d " " -f 2`
+   CN=$((CN+1))
  done
  switch_delimiter
  
