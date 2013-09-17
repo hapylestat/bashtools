@@ -102,17 +102,15 @@ list(){
  ROUTETABLE=$1
  ROUTEDEV=$2
  ROUTEGW=$3
- echo 
  echo "List(active):"
- echo "--------------------------------"
- 
+  
  LIST=`ip rule list|grep $ROUTETABLE`
  
  switch_delimiter '#'
  CN=0
  for item in $LIST
  do
-	write_item "$CN" $($item | cut -d " " -f 2)
+	write_item "$CN" `$item | cut -d " " -f 2`
    $CN=$((CN+1))
  done
  switch_delimiter
