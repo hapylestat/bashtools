@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APPNAME=zabbix
-APPVER=2.1.3
+APPVER=2.0.8
 
 #application mode (server/client)
 MODE="server"
@@ -9,6 +9,8 @@ MODE="server"
 #mysql/sqlite
 DATABASE="mysql"
 
+#CHANNEL: Stable/Development
+CHANNEL="Stable"
 #==[option builder]=============================================
 case "$DATABASE" in
   mysql)
@@ -29,7 +31,7 @@ fi
 
 
 if [ ! -f $srvDOWNDIR/$APPNAME-$APPVER.tar.gz ]; then
- run "wget \"http://heanet.dl.sourceforge.net/project/$APPNAME/ZABBIX Latest Development/$APPVER/$APPNAME-$APPVER.tar.gz\" -O $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Download source"
+ run "wget \"http://heanet.dl.sourceforge.net/project/$APPNAME/ZABBIX Latest $CHANNEL/$APPVER/$APPNAME-$APPVER.tar.gz\" -O $srvDOWNDIR/$APPNAME-$APPVER.tar.gz" "Download source"
 else
  echo "Source downloading skipped as allready downloaded"
 fi
