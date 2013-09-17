@@ -109,9 +109,11 @@ list(){
  LIST=`ip rule list|grep $ROUTETABLE`
  
  switch_delimiter '#'
+ CN=0
  for item in $LIST
  do
-   echo $item | cut -d " " -f 2
+	write_item "$CN" $($item | cut -d " " -f 2)
+   $CN=$((CN+1))
  done
  switch_delimiter
  
@@ -121,13 +123,13 @@ list(){
 
 #list available profiles
 list_all(){
- echo 
- echo "List(profiles):"
- echo "--------------------------------"
+ echo  
  list=`ls $MYDIR/conf`
  for item in $list
  do
-  echo $item
+  write_header $item
+  include conf/$item
+  list $ROUTETABLE $ROUTEDEV $ROUTEGW
  done
 }
 
