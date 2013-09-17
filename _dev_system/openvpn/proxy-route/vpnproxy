@@ -102,7 +102,6 @@ list(){
  ROUTETABLE=$1
  ROUTEDEV=$2
  ROUTEGW=$3
- echo "List(active):"
   
  LIST=`ip rule list|grep $ROUTETABLE`
  
@@ -125,7 +124,7 @@ list_all(){
  list=`ls $MYDIR/conf`
  for item in $list
  do
-  write_header $item
+  write_header "Active - $item"
   include conf/$item
   list $ROUTETABLE $ROUTEDEV $ROUTEGW
  done
