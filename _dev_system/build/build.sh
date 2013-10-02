@@ -17,6 +17,7 @@ MYDIR=${MYDIR%%/$FILENAME}
 include  /etc/system.conf
 
 EXITONERROR=1
+SCRIPTFILE=null
 #=============callbacks
 
 do_build(){
@@ -31,9 +32,14 @@ do_build(){
 
 #check if any param are passed
 if [ ! -z $1 ]; then
-  if [ -e "$MYDIR/mods/$1.sh.disabled" ] || [ -e "$MYDIR/mods/$1.sh" ]; then
-   echo "file exists"
+  if [ -e "$MYDIR/mods/$1.sh.disabled" ]; then
+     SCRIPTFILE="$MYDIR/mods/$1.sh.disabled"
   fi
+  if [ -e "$MYDIR/mods/$1.sh" ]; then
+     SCRIPTFILE="$MYDIR/mods/$1.sh"
+  fi
+  write_item "Starting build of" "$1"
+  include $SCRIPTFILE
 else 
  dirlist_callback do_build "$MYDIR/mods" "sh"
 fi
