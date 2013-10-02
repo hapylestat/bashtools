@@ -31,7 +31,7 @@ do_build(){
 
 #check if any param are passed
 if [ ! -z $1 ]; then
-  if [ -e "$MYDIR/mods/$1.sh.disabled" ]; then
+  if [ -e "$MYDIR/mods/$1.sh.disabled" ] || [ -e "$MYDIR/mods/$1.sh" ]; then
    echo "file exists"
   fi
 else 
