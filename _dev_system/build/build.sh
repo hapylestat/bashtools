@@ -29,4 +29,12 @@ do_build(){
 
 #=============main
 
-dirlist_callback do_build "$MYDIR/mods" "sh"
+#check if any param are passed
+if [ ! -z $1 ]; then
+  if [ -e "$MYDIR/mods/$1.sh.disabled" ]; then
+   echo "file exists"
+  fi
+else 
+ dirlist_callback do_build "$MYDIR/mods" "sh"
+fi
+
