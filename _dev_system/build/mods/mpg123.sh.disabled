@@ -9,6 +9,16 @@ else
  echo "Source downloading skipped as allready downloaded"
 fi
 
+if [ ! -z $ARG1 ]; then
+  if [ "$ARG1" == "--download" ]; then
+   die "Only download flag used"
+  fi
+  if [ "$ARG1" == "--help" ]; then
+   die "--download - only download module"
+  fi
+fi
+
+
 switch_dir $srvDOWNDIR
 run "tar -xf $srvDOWNDIR/$APPNAME-$APPVER.tar.bz2" "Prepare source"
 switch_dir

@@ -38,8 +38,12 @@ if [ ! -z $1 ]; then
   if [ -e "$MYDIR/mods/$1.sh" ]; then
      SCRIPTFILE="$MYDIR/mods/$1.sh"
   fi
+  #-----------------pass inside script arguments
+  ARG1=$2
+  ARG2=$3
   write_item "Starting build of" "$1"
   include $SCRIPTFILE
+  #--------------------------------------------
 else 
  dirlist_callback do_build "$MYDIR/mods" "sh"
 fi
