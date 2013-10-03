@@ -50,14 +50,14 @@ do_actions(){
        write_error "[!] No profile passed"
        return 1
      fi
-     route_client $ROUTETABLE $ROUTEDEV $ROUTEGW
+     route_client $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
     ;;  
     stop)
      if [ "$PROXY" == "" ]; then 
        write_error "[!] No profile passed"
        return 1
      fi
-     unroute_client $ROUTETABLE $ROUTEDEV $ROUTEGW
+     unroute_client $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
      ;;
     list)
       if [ "$PROXY" == "" ]; then
@@ -76,46 +76,90 @@ do_actions(){
 # 1:  routetable
 # 2:  routedev
 # 3:  routegw
+# 4:  vpntype
 route_client(){
  ROUTETABLE=$1
  ROUTEDEV=$2
  ROUTEGW=$3
- run "ip rule add from $CLIENTIP table $ROUTETABLE" "Add source ip"
- run "ip route add default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Add source rule"
+ VPNTYPE=$4
+ case "$VPNTYPE" in
+ vpnc)
+   #routetable - path to configuration file
+   #routedev - vpnc eth name
+   #routegw - config file name
+    run "cp /etc/resolv.conf /tmp/resolv" "backup dns resolv file" 
+    switch_dir "$ROUTETABLE"
+    run "vpnc $ROUTEGW" "@simple"
+    switch_dir
+    run "iptables -t nat -A POSTROUTING --out-interface $ROUTEDEV -j MASQUERADE" "Apply route"
+    run "mv --force /tmp/resolv /etc/resolv.conf" "Restore dns resolv"
+   ;;
+ openvpn)
+   run "ip rule add from $CLIENTIP table $ROUTETABLE" "Add source ip"
+   run "ip route add default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Add source rule"
+   ;;
+ 
+ esac
 }
 
 # 1:  routetable
 # 2:  routedev
 # 3:  routegw
+# 4:  vpntype
 unroute_client(){
  ROUTETABLE=$1
  ROUTEDEV=$2
  ROUTEGW=$3
- run "ip route del default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Del source rule"
- run "ip rule del from $CLIENTIP table $ROUTETABLE" "Del source ip"
+ VPNTYPE=$4
+ case "$VPNTYPE" in
+ vpnc)
+   #routetable - path to configuration file
+   #routedev - vpnc eth name
+   #routegw - config file name 
+   run "iptables -t nat -D POSTROUTING --out-interface $ROUTEDEV -j MASQUERADE" "Disable routing"
+   switch_dir "$ROUTETABLE"
+   run "vpnc-disconnect" "Stop vpnc"
+   switch_dir
+   ;;
+ openvpn)
+   run "ip route del default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Del source rule"
+   run "ip rule del from $CLIENTIP table $ROUTETABLE" "Del source ip"
+  ;;
+ esac
 }
 
 # 1:  routetable
 # 2:  routedev
 # 3:  routegw
+# 4:  vpntype
 list(){
  ROUTETABLE=$1
  ROUTEDEV=$2
  ROUTEGW=$3
   
- LIST=`ip rule list|grep $ROUTETABLE`
+ case "$VPNTYPE" in
+ openvpn)
+   LIST=`ip rule list|grep $ROUTETABLE`
  
- switch_delimiter '#'
- CN=0
- for item in $LIST
- do
-	write_item "$CN" `echo $item | cut -d " " -f 2`
-   CN=$((CN+1))
- done
- switch_delimiter
+   switch_delimiter '#'
+   CN=0
+   for item in $LIST
+   do
+     write_item "$CN" `echo $item | cut -d " " -f 2`
+     CN=$((CN+1))
+   done
+   switch_delimiter
  
- #ip route list table $ROUTETABLE
- echo
+   #ip route list table $ROUTETABLE
+   ;;
+ vpnc)
+   TMPPID=`ps -A|grep vpnc|cut -f 1 -d " "`
+   if [ "$TMPPID" != "" ]; then
+     write_item "vpnc" "active"
+   fi
+   ;;
+ esac
+  echo
 }
 
 #list available profiles
@@ -126,7 +170,7 @@ list_all(){
  do
   write_header "Active - $item"
   include conf/$item
-  list $ROUTETABLE $ROUTEDEV $ROUTEGW
+  list $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
  done
 }
 

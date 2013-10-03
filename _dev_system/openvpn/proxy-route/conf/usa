@@ -1,5 +1,6 @@
 #!/bin/bash
 
+VPNTYPE=openvpn
 ROUTETABLE=proxyUSA
 ROUTEDEV=tapAliceUSA
 ROUTEGW=2.3.2.1

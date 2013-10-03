@@ -59,19 +59,19 @@ write_center(){
 
 
 write_error() {
- MSG="Error appears"
+ MSG_ERROR="Error appears"
  if [ ! -z "$1" ]; then
-  MSG=$1
+  MSG_ERROR=$1
  fi
- echo -e "${COLOR_RED}$MSG${COLOR_END}"
+ echo -e "${COLOR_RED}$MSG_ERROR${COLOR_END}"
 }
 
 write_info() {
- MSG="Error appears"
+ MSG_INFO="Error appears"
  if [ ! -z "$1" ]; then
-  MSG=$1
+  MSG_INFO=$1
  fi
- echo -e "${COLOR_ITEM}$MSG${COLOR_END}"
+ echo -e "${COLOR_ITEM}$MSG_INFO${COLOR_END}"
 }
 
 # ==> switch to selected dir with possibility to switch back
@@ -90,7 +90,7 @@ switch_dir(){
 
 # ==> Run command with status tracking
 # $1 - comamnd to start
-# $2 - 0 -disable status and enable app output OR print status text (used if exists)
+# $2 - 0 -disable status and enable app output, @simple - "just run as is",  OR print status text (used if exists)
 # $3 - username, in which context command should be started
 run(){
  LASTCMD=$1
@@ -106,7 +106,11 @@ run(){
  fi
  
  echo -n "$NAME..........."
- eval $EXEC >$RUNLOG 2>&1 
+ if [ "$2" == "@simple" ]; then
+  eval $EXEC
+ else
+  eval $EXEC >$RUNLOG 2>&1 
+ fi
 
  LASTSTATUS=$?
  GLOBALSTATUS=$(($GLOBALSTATUS+$LASTSTATUS))
@@ -294,4 +298,16 @@ function get_ssh_ip(){
   
  fi
  return_s $ip
+}
+
+#
+#switch/restore bash delimiter 
+# $1 new delimiter or blank
+switch_delimiter(){
+ if [ -z "$1" ]; then
+     IFS=$IFS_TMP
+ else
+   IFS_TMP=$IFS
+   IFS=$1
+ fi
 }
