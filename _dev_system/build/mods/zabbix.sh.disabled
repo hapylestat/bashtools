@@ -12,6 +12,17 @@ DATABASE="mysql"
 #CHANNEL: Stable/Development
 CHANNEL="Stable"
 #==[option builder]=============================================
+
+if [ ! -z $ARG1 ]; then
+ if [ "$ARG1" == "--mode" ];then
+   MODE=$ARG2
+ fi
+ if [ "$ARG1" == "--help" ]; then
+  die "$FILENAME $APPNAME --mode [client|server]"
+ fi
+fi
+
+
 case "$DATABASE" in
   mysql)
     DATABASE="--with-mysql=$srvDIR/mysql/bin/mysql_config"
