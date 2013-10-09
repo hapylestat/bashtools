@@ -5,7 +5,10 @@ MYDIR=`echo $0`
 FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
-. $MYDIR/functions.shinc
+
+. /etc/system.conf
+
+. $srvDIR/_dev_system/functions
 
 
 
