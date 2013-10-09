@@ -12,9 +12,10 @@ FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
-. $MYDIR/functions.shinc
 
-include  /etc/system.conf
+
+. /etc/system.conf
+. $srvDIR/_dev_system/functions
 
 EXITONERROR=1
 SCRIPTFILE=null

@@ -11,7 +11,8 @@ MYDIR=`echo $0`
 FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
-. $MYDIR/functions
+. /etc/system.conf
+. $srvDIR/_dev_system/functions
 #===print banner
 echo "$APPNAME $APPVER, lib $CORENAME $COREVER (c) 2013, H.L."
 #=============callback functions

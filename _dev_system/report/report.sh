@@ -7,7 +7,6 @@ MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
-
 . $srvDIR/_dev_system/functions
 
 
