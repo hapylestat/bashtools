@@ -1,5 +1,0 @@
-#!/bin/sh
-. /usr/srv/system/functions
-openvpn --rmtun --dev tapX
-openvpn --mktun --dev tapX
-openvpn --config $ROOTDIR/openvpn/server.conf
