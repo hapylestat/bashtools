@@ -1,7 +1,7 @@
 #!/bin/bash
 
 APPNAME=nginx
-APPVER=1.5.4
+APPVER=1.5.7
 DEPNAME1=openssl
 DEPVER1=1.0.1e
 FAKENAME=sangou
@@ -29,9 +29,9 @@ switch_dir
 rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/apps/cms.pod
 rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/apps/smime.pod
 rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/crypto/X509_STORE_CTX_get_error.pod
-#rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/*.pod
-#echo "=pod" > $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/temp.pod
-#echo "=cut" >> $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/temp.pod
+rm -f $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/*.pod
+echo "=pod" > $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/temp.pod
+echo "=cut" >> $srvDOWNDIR/$DEPNAME1-$DEPVER1/doc/ssl/temp.pod
 #======
 
 
