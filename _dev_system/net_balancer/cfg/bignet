@@ -1,0 +1,4 @@
+#!/bin/bash 
+
+DEVICE=eth1
+PRIMARY=no
