@@ -8,12 +8,100 @@
 #========================Global variables
 APPVER="0.1b"
 MYDIR=`echo $0`
+MYREALDIR=`readlink $MYDIR`
+if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
 FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
-. $MYDIR/functions.shinc
+. /etc/system.conf
+. $srvDIR/_dev_system/functions
+
+IFCFG_PATH=/etc/sysconfig/network-scripts/ifcfg-
+
+#=================callbacks
+
+do_disable(){
+     include $2/$1
+     include ${IFCFG_PATH}$DEVICE
+     write_item "Disable routes for $1" "gate $GATEWAY"
+     route delete default gw $GATEWAY metric 0 1>/dev/nul 2>&1
+}
+
+do_status(){
+  include $2/$1
+  include ${IFCFG_PATH}$DEVICE
+  ping $GATEWAY -c 1 -W 1 1>/dev/null 2>&1
+  
+  if [ $? -eq 0 ]; then
+   STATUS="online"
+  else
+   STATUS="offline"
+  fi
+  
+  write_item "Gate $GATEWAY of provider $1" "$STATUS"
+}
+
+do_list(){
+  write_item "Item" "$1"
+}
+
+#==help functions
+disable_routes(){
+  dirlist_callback do_disable "$MYDIR/cfg" "cfg"
+  
+}
 
 
+# 1 - provider name
+enable_route(){
+  include $MYDIR/cfg/$1.cfg
+  include ${IFCFG_PATH}$DEVICE
+  write_item "Set default route for $1" "gate $GATEWAY"
+  route add default gw $GATEWAY metric 0 1>/dev/null 2>&1
+}
 
-/etc/sysconfig/network-scripts
+# 1 - provider name
+provider_ping(){
+  include $MYDIR/cfg/$1.cfg
+  include ${IFCFG_PATH}$DEVICE
+  write_item "Pinging $1" "gate $GATEWAY"
+  ping $GATEWAY
+}
+
+list(){
+ dirlist_callback do_list "$MYDIR/cfg" "cfg" 
+}
+
+status(){
+  dirlist_callback do_status "$MYDIR/cfg" "cfg" 
+}
+
+help(){
+ echo "Available params: start, stop, list, ping, status"
+
+}
+#============main
+
+
+#ip route add default nexthop via $LANET weight 250 nexthop via $BIGNET weight 1 
+
+ case "$1" in
+    stop)     
+     disable_routes
+    ;;
+    start)
+     enable_route "$2"
+     ;;
+    ping)
+     provider_ping "$2"
+     ;;
+    status)
+     status
+     ;;
+    list)
+      list
+     ;;
+    *)
+    help
+  esac

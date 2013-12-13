@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #----note: use "echo -e" is required
 COLOR_BEGIN="\033["
 COLOR_RED="${COLOR_BEGIN}0;31m"
@@ -17,16 +16,12 @@ C=0
 control_c(){
   TOEND=false
 }
-
 trap control_c SIGINT
-
-
-
 #==============main
 echo "Begin =>"
 
 while [ $TOEND == true ]; do
-  DATA=`ping $HOST -c 1 -W 2 -q -n|grep rtt|cut -d "=" -f 2`
+  DATA=`ping $HOST -c 1 -W 2 -qn|grep rtt|cut -d "=" -f 2`
   C=0
   if [ "$DATA" == "" ]; then
     echo -en "${COLOR_RED}d${COLOR_END}"
