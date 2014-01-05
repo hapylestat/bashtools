@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#============================
+APPNAME=ffmpeg
+APPVER=2.1.1
+ARCHIVE=tar.bz2
+#==========================
+FILENAME=$APPNAME-$APPVER.$ARCHIVE
+
+if [ ! -f $srvDOWNDIR/$FILENAME ]; then
+run "wget http://ffmpeg.org/releases/$FILENAME -O $srvDOWNDIR/$FILENAME" "Download dependency source"
+else
+ echo "Source are exist..."
+fi
+
+
+switch_dir $srvDOWNDIR
+run "tar -xf $srvDOWNDIR/$FILENAME" "Prepare source"
+switch_dir
+
+#build dependency
+switch_dir $srvDOWNDIR/$APPNAME-$APPVER
+run "./configure --prefix=/usr --enable-shared" "Configure $APPNAME"
+run "make" "Build $APPNAME"
+run "make install" "Install dependency $APPNAME"
+switch_dir
+
+
