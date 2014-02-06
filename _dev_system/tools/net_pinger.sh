@@ -18,7 +18,7 @@ control_c(){
 }
 trap control_c SIGINT
 #==============main
-echo "Begin =>"
+echo "Begin with host $HOST =>"
 
 while [ $TOEND == true ]; do
   DATA=`ping $HOST -c 1 -W 2 -qn|grep rtt|cut -d "=" -f 2`
