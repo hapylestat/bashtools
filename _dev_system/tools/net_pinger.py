@@ -50,13 +50,13 @@ def main():
     while True:
 	t=ping(HOST);
 	if t < 50:
-	    tprint("{0}.{1}".format(tcolor.lime,tcolor.end));
+	    tprint(tcolor.lime,".",tcolor.end);
 	elif t < 130:
-	    tprint("{0}.{1}".format(tcolor.yellow,tcolor.end));
+	    tprint(tcolor.yellow,".",tcolor.end);
 	elif t < 250:
-	    tprint("{0}.{1}".format(tcolor.red,tcolor.end));
+	    tprint(tcolor.red,".",tcolor.end);
 	elif t == -1:
-	    tprint("{0}d{1}".format(tcolor.red,tcolor.end));
+	    tprint(tcolor.red,"d",tcolor.end);
 	    
 	time.sleep(2);
 
