@@ -12,6 +12,8 @@ MYREALDIR=`readlink $MYDIR`
 if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
 FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
+# use that to interupt execution of script on error
+#EXITONERROR=1
 #=======================Include base library
 . $MYDIR/functions
 

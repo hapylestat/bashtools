@@ -8,11 +8,14 @@
 #========================Global variables
 APPVER="0.1b"
 MYDIR=`echo $0`
+MYREALDIR=`readlink $MYDIR`
+if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
 FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
-. $MYDIR/functions.shinc
+. /etc/system.conf
+. $srvDIR/_dev_system/functions
 
 
 
