@@ -105,8 +105,11 @@ run(){
    NAME="$NAME (under $USER)"
  fi
  
- echo -n "$NAME..........."
- if [ "$2" == "@simple" ]; then
+ if [ "$2" != "null" ] && [ ! -z "$2" ]; then
+  echo -n "$NAME..........."
+ fi
+
+ if [ "$2" == "null" ]; then
   eval $EXEC
  else
   eval $EXEC >$RUNLOG 2>&1 
@@ -115,7 +118,7 @@ run(){
  LASTSTATUS=$?
  GLOBALSTATUS=$(($GLOBALSTATUS+$LASTSTATUS))
  
-  if [ "$2" != "0" ] && [ ! -z "$2" ]; then
+  if [ "$2" != "null" ] && [ ! -z "$2" ]; then
    status_check "$NAME"
   fi
   
