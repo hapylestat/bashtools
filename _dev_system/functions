@@ -153,7 +153,8 @@ status_check(){
  
  #check, if application start failed...
   if [ -e $RUNLOG ]; then
-    if [ $LASTSTATUS -gt 0 ]; then
+    #ToDo: add silent flag or so on, to give more options for output
+    if [ $LASTSTATUS -gt 0 ] && [ $EXITONERROR -eq 1 ]; then
       echo -ne "Task '$1' echo: ${COLOR_RED}"
       cat $RUNLOG
       echo -e "${COLOR_END}"    
