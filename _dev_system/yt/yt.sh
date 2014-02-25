@@ -23,8 +23,8 @@ do_mods(){
   include "$2/$1"
 }
 
-dirlist_callback do_mods  "$MYDIR/lib" "lib"
-dirlist_callback do_mods  "$MYDIR/mods" "mod"
+dirlist_callback do_mods  "$MYDIR/lib" "shlib"
+dirlist_callback do_mods  "$MYDIR/mods" "shmod"
 
 
 printhelp(){
