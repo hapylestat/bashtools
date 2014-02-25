@@ -101,12 +101,15 @@ run(){
  USER=$3
  
  if [ ! -z $3 ]; then
-   EXEC="sudo -u $3 $EXEC"
+   EXEC="sudo -H -u $3 $EXEC"
    NAME="$NAME (under $USER)"
  fi
  
- echo -n "$NAME..........."
- if [ "$2" == "@simple" ]; then
+ if [ "$2" != "null" ] && [ ! -z "$2" ]; then
+  echo -n "$NAME..........."
+ fi
+
+ if [ "$2" == "null" ]; then
   eval $EXEC
  else
   eval $EXEC >$RUNLOG 2>&1 
@@ -115,7 +118,7 @@ run(){
  LASTSTATUS=$?
  GLOBALSTATUS=$(($GLOBALSTATUS+$LASTSTATUS))
  
-  if [ "$2" != "0" ] && [ ! -z "$2" ]; then
+  if [ "$2" != "null" ] && [ ! -z "$2" ]; then
    status_check "$NAME"
   fi
   
@@ -150,7 +153,8 @@ status_check(){
  
  #check, if application start failed...
   if [ -e $RUNLOG ]; then
-    if [ $LASTSTATUS -gt 0 ]; then
+    #ToDo: add silent flag or so on, to give more options for output
+    if [ $LASTSTATUS -gt 0 ] && [ $EXITONERROR -eq 1 ]; then
       echo -ne "Task '$1' echo: ${COLOR_RED}"
       cat $RUNLOG
       echo -e "${COLOR_END}"    
@@ -165,6 +169,7 @@ status_check(){
     break;
   fi
 }
+
 
 
 # => get string item by delimiter
