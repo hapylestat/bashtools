@@ -1,6 +1,0 @@
-#!/bin/bash
-
-VPNTYPE=vpnc
-ROUTETABLE=/etc/vpnc
-ROUTEDEV=tun0
-ROUTEGW=1

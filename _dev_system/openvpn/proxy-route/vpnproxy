@@ -18,6 +18,7 @@ MYDIR=${MYDIR%%/$FILENAME}
 . $srvDIR/_dev_system/functions
 
 CLIENTIP=$(get_ssh_ip)
+CONFDIR=$srvCONFDIR/system/vpn
 
 echo -e "${COLOR_LIME}$FILENAME, $APPVER.... ${COLOR_END}"
 #echo -e "${COLOR_RED}Client ip: ${CLIENTIP} ${COLOR_END}"
@@ -35,14 +36,14 @@ help(){
 #$2 name
 do_actions(){
  PROXY=$2
- if [ ! -e $MYDIR/conf/$PROXY ]; then
+ if [ ! -e $CONFDIR/$PROXY ]; then
   write_error "[!] Proxy profile $2 not found."
   return 1
  else
   write_info "Using profile $2..."
  fi
 
-  include "conf/$PROXY"
+  include "$CONFDIR/$PROXY"
 
   case "$1" in
     start)     
@@ -139,13 +140,19 @@ list(){
   
  case "$VPNTYPE" in
  openvpn)
-   LIST=`ip rule list|grep $ROUTETABLE`
- 
+   #Help: get list of rules| select only required|select only ip of clients|replace newline to #
+   LIST=`ip rule list|grep $ROUTETABLE|grep -o -P '(\d{1,3}\.)+\d{1,3}'|sed -e ':a;N;$!ba;s/\n/#/g'`
    switch_delimiter '#'
    CN=0
-   for item in $LIST
-   do
-     write_item "$CN" `echo $item | cut -d " " -f 2`
+   ISLIVE=
+   for item in $LIST; do
+     ping -c 1 -W 1 -q $item 1>/dev/null 2>$1
+     if [ ! $? -eq 0 ]; then 
+      ISALIVE="(posibly dead)"
+     else
+      ISALIVE=
+     fi
+     write_item "$CN" "$item $ISALIVE"
      CN=$((CN+1))
    done
    switch_delimiter
@@ -159,17 +166,17 @@ list(){
    fi
    ;;
  esac
-  echo
+ 
 }
 
 #list available profiles
 list_all(){
  echo  
- list=`ls $MYDIR/conf`
+ list=`ls $CONFDIR`
  for item in $list
  do
   write_header "Active - $item"
-  include conf/$item
+  include $CONFDIR/$item
   list $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
  done
 }
@@ -181,7 +188,7 @@ list_all(){
 case "$1" in
   help)
   help
-  ;;  
+  ;;
   *)
   do_actions "$1" "$2"
 esac
