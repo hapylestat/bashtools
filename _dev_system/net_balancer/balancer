@@ -15,7 +15,7 @@ MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
-. $srvDIR/_dev_system/functions
+. $libROOT/functions
 
 IFCFG_PATH=/etc/sysconfig/network-scripts/ifcfg-
 

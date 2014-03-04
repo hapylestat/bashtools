@@ -15,7 +15,7 @@ MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
-. $srvDIR/_dev_system/functions
+. $libROOT/functions
 
 CLIENTIP=$(get_ssh_ip)
 CONFDIR=$srvCONFDIR/system/vpn

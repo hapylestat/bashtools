@@ -12,10 +12,8 @@ FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
 MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
-
-
 . /etc/system.conf
-. $srvDIR/_dev_system/functions
+. $libROOT/functions
 
 EXITONERROR=1
 SCRIPTFILE=null
