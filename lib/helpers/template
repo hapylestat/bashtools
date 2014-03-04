@@ -1,0 +1,21 @@
+#!/bin/bash 
+######################################
+#            Shell script            #
+# Author: H.L.                       #
+# TPL Version: 0.1                   #
+######################################
+
+#========================Global variables
+APPVER="0.1b"
+MYDIR=`echo $0`
+MYREALDIR=`readlink $MYDIR`
+if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
+FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
+MYDIR=${MYDIR%%/$FILENAME}
+#=======================Include base library
+
+. /etc/system.conf
+. $libROOT/functions
+
+
+

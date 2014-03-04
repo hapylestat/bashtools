@@ -1,0 +1,323 @@
+#!/bin/bash
+#=====bash color constants
+CORENAME="BCore"
+COREVER="0.2a"
+#----note: use "echo -e" is required
+COLOR_BEGIN="\033["
+COLOR_RED="${COLOR_BEGIN}0;31m"
+COLOR_LIME="${COLOR_BEGIN}1;32m"
+COLOR_BR="${COLOR_BEGIN}1;38;05;51m"
+COLOR_ITEM="${COLOR_BEGIN}1;38;05;214m"
+COLOR_VALUE="${COLOR_BEGIN}1;38;05;110m"
+COLOR_END="\033[0m"
+RUNLOG=/tmp/run_appoutput
+#=====variables
+ROOTDIR=${MYDIR}
+LASTCMD=""
+LASTSTATUS=0
+GLOBALSTATUS=0
+#stop executing script on error appears
+ #sigint are catched
+sSTOP=0 
+sSTOP_TRY=0
+ #set to 1, to eit on first error
+EXITONERROR=0
+#===========================
+
+#########################signal handling
+control_c(){
+  echo User request termination of application, try to stop...
+  sSTOP_TRY=$((sSTOP_TRY+1))
+  sSTOP=1
+  if [ $sSTOP_TRY -gt 3 ]; then #application hanging up?
+    killall "$FILENAME"
+  fi
+}
+
+trap control_c SIGINT
+
+
+###########################/signal handling
+write_header(){
+   #convert title to upper case
+  TITLE=${1^^}
+  echo -e "${COLOR_BR}------------[$TITLE]----------------${COLOR_END}"
+}
+
+write_item(){
+  ITEM_NAME=${1^}
+  ITEM_VAL=$2
+  echo -e "${COLOR_ITEM}${ITEM_NAME}: ${COLOR_VALUE}${ITEM_VAL}${COLOR_END}"
+}
+
+write_center(){
+ value=$1
+ w=$(stty size|cut -d" " -f2)
+ l=${#value}
+ if [ $w -gt $l ]; then
+   printf "%"$(( ((w-1)/2)-(l/2) ))"s"
+   echo -e $value
+ else
+  echo -e $value
+ fi
+}
+
+
+write_error() {
+ MSG_ERROR="Error appears"
+ if [ ! -z "$1" ]; then
+  MSG_ERROR=$1
+ fi
+ echo -e "${COLOR_RED}$MSG_ERROR${COLOR_END}"
+}
+
+write_info() {
+ MSG_INFO="Error appears"
+ if [ ! -z "$1" ]; then
+  MSG_INFO=$1
+ fi
+ echo -e "${COLOR_ITEM}$MSG_INFO${COLOR_END}"
+}
+
+# ==> switch to selected dir with possibility to switch back
+# $1 - switch to dir/blank. If blank, func will try to switch back
+switch_dir(){
+ if [ ! -z $1 ]; then
+   echo $PWD >/tmp/.switchback
+   cd $1
+ else
+  TMPDIR=`cat /tmp/.switchback`
+  rm -f /tmp/.switchback
+  cd $TMPDIR
+ fi
+  
+}
+
+# ==> Run command with status tracking
+# $1 - comamnd to start
+# $2 - 0 -disable status and enable app output, @simple - "just run as is",  OR print status text (used if exists)
+# $3 - username, in which context command should be started
+run(){
+ LASTCMD=$1
+ #---------test status variable to exists or 0 set. in both variants status is disabled.
+ 
+ EXEC=$1
+ NAME=$2
+ USER=$3
+ 
+ if [ ! -z $3 ]; then
+   EXEC="sudo -H -u $3 $EXEC"
+   NAME="$NAME (under $USER)"
+ fi
+ 
+ if [ "$2" != "null" ] && [ ! -z "$2" ]; then
+  echo -n "$NAME..........."
+ fi
+
+ if [ "$2" == "null" ]; then
+  eval $EXEC
+ else
+  eval $EXEC >$RUNLOG 2>&1 
+ fi
+
+ LASTSTATUS=$?
+ GLOBALSTATUS=$(($GLOBALSTATUS+$LASTSTATUS))
+ 
+  if [ "$2" != "null" ] && [ ! -z "$2" ]; then
+   status_check "$NAME"
+  fi
+  
+ return $?
+}
+
+# ==> Run command from system sub-folder
+# $1 - comamnd to start
+# $2 - print status test (used if exists)
+script(){
+ run "${ROOTDIR}/$1" "$2"
+}
+
+# ==> show status of last run command
+# $1 - description to show
+# $2 - switch description visibility (if set then true)
+status_check(){
+ RETSTAT=$LASTSTATUS
+ #check app log availability, and if status is ok 0 remove it
+ if [ $LASTSTATUS -eq 0 ] && [ -e $RUNLOG ]; then
+   rm -f $RUNLOG 
+ fi
+ 
+ if [ ! -z $2 ]; then
+   MSG="$1..........." 
+ fi
+ if [ $RETSTAT = 0 ]; then
+   echo -e "$MSG[$COLOR_LIME OK $COLOR_END]"
+ else
+   echo -e "$MSG[$COLOR_RED FAILED $COLOR_END]"
+ fi
+ 
+ #check, if application start failed...
+  if [ -e $RUNLOG ]; then
+    #ToDo: add silent flag or so on, to give more options for output
+    if [ $LASTSTATUS -gt 0 ] && [ $EXITONERROR -eq 1 ]; then
+      echo -ne "Task '$1' echo: ${COLOR_RED}"
+      cat $RUNLOG
+      echo -e "${COLOR_END}"    
+    fi
+  #cleanup
+   rm -f $RUNLOG 
+  fi
+  
+   #check, if appears critical error
+   if [ $EXITONERROR -eq 1 ] && [ $LASTSTATUS -gt 0 ]; then
+    echo -e "${COLOR_RED}[!]${COLOR_END} Critical error appears, exiting..."    
+    break;
+  fi
+}
+
+
+
+# => get string item by delimiter
+# $1 - string 
+# $2 - delimiter
+# $3 - item num
+function str_item(){
+  temp=$(echo $1)
+  out="none"
+  delim=$2
+  cnt=0
+  while [ $cnt -lt $3 ]; do
+   out=${temp%%$delim*}
+   temp=${temp#*$delim}
+   let cnt=cnt+1
+  done
+  echo $out
+}
+
+
+# => last log string
+function get_current_lastlog(){
+  user=$(id -un)
+  data=$(last -i | sed -n 2p)
+  curr=" "
+  if [ "$data" == "" ]; then
+   data=$(last -i | sed -n 1p)
+   curr="(current)"
+  fi
+  ip=$(str_item "$data" " " 3)
+  hst=`nslookup $ip | grep "name ="`
+  hst="${hst#* =}"
+  echo "from \"$ip($hst)\" at $(str_item "$data" " " 7) on $(str_item "$data" " " 4)  $(str_item "$data" " " 5)/$(str_item "$data" " " 6) using login \"$(str_item "$data" " " 1)"\" ${curr}
+
+}
+
+#  Include script to base file (safe function)
+# $1 - file
+include(){
+  if [ -f $ROOTDIR/$1 ]; then
+     source $ROOTDIR/$1
+  else 
+     if [ -f $1 ]; then
+      source $1
+     fi
+  fi
+}
+
+#list directory content
+# $1 - callback function
+# $2 - dir to lookup
+# $3 - extension filter
+dirlist_callback(){
+ if [ ! -z $3 ]; then
+   list=$(dirlist "$2" "$3")
+ else
+   list=$(dirlist "$2")
+ fi
+ 
+ for itemlist in $list
+ do
+   "$1" "$itemlist" "$2"
+ done
+}
+
+# return array of subdirs
+# $1 - dir to list
+# $2 - list only files
+dirlist(){
+ if [ ! -z $2 ]; then
+   echo `ls -d1 $1/*.$2 | rev | cut -d / -f 1 | rev`
+ else
+   echo `ls -d1 $1/*/ | rev | cut -c 2- | cut -d / -f 1 | rev`
+ fi
+}
+
+# echo string without EOL
+# $1 - string to echo
+return_s(){
+ echo -n "$1"
+}
+
+
+
+
+#install systemd service
+# $1 - name
+# $2 - path to launch string
+# $3 - service type, leave blank to be simple (simple,forking)
+
+service_install(){
+ TMPFILE=/lib/systemd/system/$1.service
+ STYPE="simple"
+ if [ ! -z $3 ]; then 
+  STYPE=$3
+ fi
+ rm -f $TMPFILE
+ echo  "[Unit]" >> $TMPFILE
+ echo  "Description=$1 service" >>  $TMPFILE
+ echo  "After=syslog.target network.target" >> $TMPFILE
+ echo >>$TMPFILE
+ echo "[Service]" >>$TMPFILE
+ 
+ echo "Type=$STYPE" >>$TMPFILE
+ echo "ExecStart=$2" >>$TMPFILE
+ if [ "$STYPE" == "oneshot" ]; then
+  echo "RemainAfterExit=yes" >> $TMPFILE
+ else
+  echo "ExecReload=/bin/kill -s HUP \$MAINPID" >>$TMPFILE
+  echo "ExecStop=/bin/kill -s QUIT \$MAINPID" >>$TMPFILE
+ fi
+ echo >>$TMPFILE
+ echo "[Install]" >>$TMPFILE
+ echo "WantedBy=multi-user.target" >>$TMPFILE
+
+ ln -s $TMPFILE /etc/systemd/system/$1.service
+
+ systemctl daemon-reload
+
+}
+
+#
+#extract ip from SSH_CLIENT Variable if exists
+#return result via $(get_ssh_ip)
+#
+function get_ssh_ip(){
+ ip="terminal login"
+ if [ ! -z "$SSH_CLIENT" ]; then
+  ip=$SSH_CLIENT
+  ip=${ip%% *}
+  
+ fi
+ return_s $ip
+}
+
+#
+#switch/restore bash delimiter 
+# $1 new delimiter or blank
+switch_delimiter(){
+ if [ -z "$1" ]; then
+     IFS=$IFS_TMP
+ else
+   IFS_TMP=$IFS
+   IFS=$1
+ fi
+}
