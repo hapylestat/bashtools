@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+#capture time in miliseconds
+start_perf_timer(){
+ PERF_START_TIME=$(date +%s%3N)
+ PERF_TIME=-1
+}
+
+#capture time, calculate difference and format output to PERF_TIME
+stop_perf_timer(){
+ PERF_STOP_TIME=$(date +%s%3N)
+ local tdelta=$(($PERF_STOP_TIME-$PERF_START_TIME))
+ local stime_min=$(($tdelta / 1000 / 60))
+ local stime_sec=$((($tdelta/1000)-($stime_min*60)))
+ local stime_msec=$(($tdelta%1000))
+ printf -v PERF_TIME "%02d:%02d.%03d" $stime_min $stime_sec $stime_msec
+}
+

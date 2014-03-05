@@ -2,8 +2,8 @@
 
 #0. VARIABLES
 #=====bash color constants
-CORENAME="BCore"
-COREVER="0.2a"
+CORENAME="BashLib"
+COREVER="0.3a"
 #=====variables
 #stop executing script on error appears
 sSTOP=0
@@ -31,11 +31,12 @@ fi
 #1. BASE FUNCTIONALITY
 #########################signal handling
 control_c(){
-  echo User request termination of application, try to stop...
+  echo "Catching SIGINT..."
   sSTOP_TRY=$((sSTOP_TRY+1))
   sSTOP=1
-  if [ $sSTOP_TRY -gt 3 ]; then #application hanging up?
-    killall "$FILENAME"
+  if [ $sSTOP_TRY -gt 1 ]; then #application hanging up?
+    echo "!! Script hangs? Self-killing..."
+    exit 1
   fi
 }
 

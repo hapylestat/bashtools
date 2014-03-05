@@ -1,15 +1,14 @@
 #!/bin/bash
 #========================Global variables
-APPVER="0.1b"
-MYDIR=`echo $0`
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
-MYDIR=${MYDIR%%/$FILENAME}
+APPVER="0.2b"
 #=======================Include base library
 
 . /etc/system.conf
 . $libROOT/functions
 
-include terminal system filesystem
+include performance terminal system filesystem
+
+start_perf_timer
 
 #==================callback's
 #Callback handler for modules items
@@ -48,6 +47,7 @@ write_center "${COLOR_LIME}`cat /etc/issue`${COLOR_END}"
 
 #-list folders
 dirlist_callback do_mod "$MYDIR/reports"
-
 #-print bottom line
-echo -e "${COLOR_BR}--gen. by report.sh $APPVER/$CORENAME $COREVER--${COLOR_END}"
+stop_perf_timer
+
+echo -e "${COLOR_BR}--$FILENAME $APPVER/run time: $PERF_TIME-- ${COLOR_END}"

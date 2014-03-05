@@ -33,34 +33,34 @@ help(){
 #$2 name
 do_actions(){
  PROXY=$2
- if [ ! -e $CONFDIR/$PROXY ]; then
-  write_error "[!] Proxy profile $2 not found."
-  return 1
- else
-  write_info "Using profile $2..."
+ if [ "$1" == "list" ] && [ ! "$PROXY" == "" ]; then
+     if [ ! -d $CONFDIR/$PROXY ]; then
+      write_error "[!] Proxy profile $2 not found."
+      return 1
+     else
+      if [ ! -f $CONFDIR/$PROXY/.info ]; then
+       write_error "[!] Proxy profile $2 found, but they are corupted"
+       return 1;
+      fi
+      write_info "Using profile $2..."
+     fi
  fi
 
-  include "$CONFDIR/$PROXY"
 
   case "$1" in
-    start)     
-     if [ "$PROXY" == "" ]; then
-       write_error "[!] No profile passed"
-       return 1
-     fi
+    start)
+     include "$CONFDIR/$PROXY/.info"
      route_client $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
-    ;;  
+    ;;
     stop)
-     if [ "$PROXY" == "" ]; then 
-       write_error "[!] No profile passed"
-       return 1
-     fi
+     include "$CONFDIR/$PROXY/.info"
      unroute_client $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
      ;;
     list)
       if [ "$PROXY" == "" ]; then
         list_all
       else
+        include "$CONFDIR/$PROXY/.info"
         list $ROUTETABLE $ROUTEDEV $ROUTEGW
       fi
      ;;
@@ -96,7 +96,6 @@ route_client(){
    run "ip rule add from $CLIENTIP table $ROUTETABLE" "Add source ip"
    run "ip route add default table $ROUTETABLE via $ROUTEGW dev $ROUTEDEV" "Add source rule"
    ;;
- 
  esac
 }
 
@@ -172,7 +171,7 @@ list_all(){
  for item in $LIST
  do
   write_header "Active - $item"
-  include $CONFDIR/$item
+  include $CONFDIR/$item/.info
   list $ROUTETABLE $ROUTEDEV $ROUTEGW $VPNTYPE
  done
 }
