@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#list directory content
+# $1 - callback function
+# $2 - dir to lookup
+# $3 - extension filter
+dirlist_callback(){
+
+ if [ ! -z $3 ]; then
+   list=$(dirlist "$2" "$3")
+ else
+   list=$(dirlist "$2")
+ fi
+
+ for itemlist in $list
+ do
+   "$1" "$itemlist" "$2"
+ done
+}
+
+# return array of subdirs
+# $1 - dir to list
+# $2 - list only files
+dirlist(){
+ if [ ! -z $2 ]; then
+   if [ "$2" == "." ]; then
+     echo `ls -d1 $1/* | rev | cut -d / -f 1 | rev`
+   else
+     echo `ls -d1 $1/*.$2 | rev | cut -d / -f 1 | rev`
+   fi
+   
+ else
+   echo `ls -d1 $1/*/ | rev | cut -c 2- | cut -d / -f 1 | rev`
+ fi
+}
+
+
+# ==> switch to selected dir with possibility to switch back
+# $1 - switch to dir/blank. If blank, func will try to switch back
+switch_dir(){
+ if [ ! -z $1 ]; then
+   echo $PWD >/tmp/.switchback
+   cd $1
+ else
+  TMPDIR=`cat /tmp/.switchback`
+  rm -f /tmp/.switchback
+  cd $TMPDIR
+ fi
+  
+}

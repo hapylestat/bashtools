@@ -1,0 +1,46 @@
+#!/bin/bash
+
+include constants/termcolor
+
+
+#functions
+write_header(){
+   #convert title to upper case
+  TITLE=${1^^}
+  echo -e "${COLOR_BR}------------[$TITLE]----------------${COLOR_END}"
+}
+
+write_item(){
+  ITEM_NAME=${1^}
+  ITEM_VAL=$2
+  echo -e "${COLOR_ITEM}${ITEM_NAME}: ${COLOR_VALUE}${ITEM_VAL}${COLOR_END}"
+}
+
+write_center(){
+ value=$1
+ w=$(stty size|cut -d" " -f2)
+ l=${#value}
+ if [ $w -gt $l ]; then
+   printf "%"$(( ((w-1)/2)-(l/2) ))"s"
+   echo -e $value
+ else
+  echo -e $value
+ fi
+}
+
+
+write_error() {
+ MSG_ERROR="Error appears"
+ if [ ! -z "$1" ]; then
+  MSG_ERROR=$1
+ fi
+ echo -e "${COLOR_RED}ERROR: $(basename $0)${COLOR_END} => $MSG_ERROR"
+}
+
+write_info() {
+ MSG_INFO="Error appears"
+ if [ ! -z "$1" ]; then
+  MSG_INFO=$1
+ fi
+ echo -e "${COLOR_ITEM}INFO: $(basename $0)${COLOR_END} => $MSG_INFO"
+}

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+
+# => get string item by delimiter
+# $1 - string 
+# $2 - delimiter
+# $3 - item num
+function str_item(){
+  temp=$(echo $1)
+  out="none"
+  delim=$2
+  cnt=0
+  while [ $cnt -lt $3 ]; do
+   out=${temp%%$delim*}
+   temp=${temp#*$delim}
+   let cnt=cnt+1
+  done
+  echo $out
+}

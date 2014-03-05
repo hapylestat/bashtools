@@ -7,19 +7,35 @@
 
 #========================Global variables
 APPVER="0.1b"
-MYDIR=`echo $0`
-MYREALDIR=`readlink $MYDIR`
-if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
+
+
+MYDIR=$0 && FILENAME=$(basename $MYDIR) && MYREALDIR=$(readlink $MYDIR)
+if [ ! -z $MYREALDIR ]; then FILENAME=$(basename $MYREALDIR) &&  MYDIR=$MYREALDIR; fi;
 MYDIR=${MYDIR%%/$FILENAME}
+
 # use that to interupt execution of script on error
 #EXITONERROR=1
 #=======================Include base library
+#hack, to allow work that without system.conf
+libROOT=$MYDIR/../
 . $MYDIR/../functions
 
+include terminal system filesystem
 
 # $1 - filename
 if [ ! -z $1 ]; then
-  run "cp -f $MYDIR/template $PWD/$1" "Create script from template"
+  TLIST=$(dirlist "$MYDIR/templates" ".")
+  ITEM=0
+  echo "Available templates:"
+  for item in $TLIST; do
+   echo "$ITEM. $item"
+   LIST[$ITEM]=$item
+   ITEM=$(( $ITEM+1 ))
+  done
+  read -p "Select:" ITEM
+
+  run "cp -f $MYDIR/templates/${LIST[$ITEM]} $PWD/$1" "Create script from template"
   run "chmod u+x $PWD/$1" "Apply execute permissions"
+else 
+  write_info "Syntax: $FILENAME <filename>"
 fi
