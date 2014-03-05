@@ -6,13 +6,11 @@ APPVER="0.1a"
 APPNAME="YT Manager"
 #=======================App vars
 YT_ID=hapylestat
-#------------------------------
-MYDIR=`echo $0`
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
-MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 . /etc/system.conf
 . $libROOT/functions
+
+include filesystem terminal
 #===print banner
 echo "$APPNAME $APPVER, lib $CORENAME $COREVER (c) 2013, H.L."
 #=============callback functions

@@ -5,7 +5,7 @@
 #$2 - root directory, where located functions
 
 . /etc/system.conf
-. $srvDIR/_dev_system/functions
+. $libROOT/functions
 
 get_name(){
   return_s "date"

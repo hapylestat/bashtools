@@ -5,7 +5,7 @@
 #$2 - root directory, where located functions
 
 . /etc/system.conf
-. $srvDIR/_dev_system/functions
+. $libROOT/functions
 
 get_name(){
   return_s "uptime"
@@ -17,6 +17,7 @@ get_title(){
 
 
 get_value(){
+ include strings
  tmp=$(str_item "`uptime`" "," 1)
  return_s "`echo $tmp |cut -d ' ' -f 3,4`"
 }

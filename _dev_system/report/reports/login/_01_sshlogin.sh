@@ -4,7 +4,7 @@
 #$1 - action to do
 #$2 - root directory, where located functions
 . /etc/system.conf
-. $srvDIR/_dev_system/functions
+. $libROOT/functions
 
 get_name(){
   return_s "sship"
@@ -16,6 +16,7 @@ get_title(){
 
 
 get_value(){
+ include system
  return_s "$(get_ssh_ip)"
 }
 

@@ -7,13 +7,12 @@
 
 #========================Global variables
 APPVER="0.1b"
-MYDIR=`echo $0`
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
-MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
 . $libROOT/functions
+
+include terminal filesystem system
 
 EXITONERROR=1
 SCRIPTFILE=null

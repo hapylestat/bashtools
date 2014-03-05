@@ -48,7 +48,7 @@ run(){
 # $1 - comamnd to start
 # $2 - print status test (used if exists)
 script(){
- run "${ROOTDIR}/$1" "$2"
+ run "${MYDIR}/$1" "$2"
 }
 
 # ==> show status of last run command
@@ -91,6 +91,7 @@ status_check(){
 
 # => last log string
 function get_current_lastlog(){
+  include strings
   user=$(id -un)
   data=$(last -i | sed -n 2p)
   curr=" "

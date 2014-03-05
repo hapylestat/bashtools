@@ -9,7 +9,7 @@ MYDIR=${MYDIR%%/$FILENAME}
 . /etc/system.conf
 . $libROOT/functions
 
-
+include terminal system filesystem
 
 #==================callback's
 #Callback handler for modules items

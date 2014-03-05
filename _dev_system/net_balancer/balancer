@@ -7,11 +7,6 @@
 
 #========================Global variables
 APPVER="0.1b"
-MYDIR=`echo $0`
-MYREALDIR=`readlink $MYDIR`
-if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
-MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
@@ -19,6 +14,7 @@ MYDIR=${MYDIR%%/$FILENAME}
 
 IFCFG_PATH=/etc/sysconfig/network-scripts/ifcfg-
 
+include terminal system filesystem
 #=================callbacks
 
 do_disable(){

@@ -7,15 +7,12 @@
 
 #========================Global variables
 APPVER="0.1b"
-MYDIR=`echo $0`
-MYREALDIR=`readlink $MYDIR`
-if [ ! -z $MYREALDIR ]; then  MYDIR=$MYREALDIR;  fi;
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
-MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
 . $libROOT/functions
+
+include terminal system filesystem
 
 CLIENTIP=$(get_ssh_ip)
 CONFDIR=$srvCONFDIR/system/vpn
@@ -170,9 +167,9 @@ list(){
 
 #list available profiles
 list_all(){
- echo  
- list=`ls $CONFDIR`
- for item in $list
+ echo
+ LIST=`ls $CONFDIR`
+ for item in $LIST
  do
   write_header "Active - $item"
   include $CONFDIR/$item

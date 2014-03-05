@@ -1,13 +1,12 @@
 #!/bin/bash
 #========================Global variables
 APPVER="0.1b"
-MYDIR=`echo $0`
-FILENAME=`echo $MYDIR|rev|cut -d / -f 1|rev`
-MYDIR=${MYDIR%%/$FILENAME}
 #=======================Include base library
 
 . /etc/system.conf
 . $libROOT/functions
+
+include system terminal filesystem
 
 EXITONERROR=1
 BUILDUSER=makerpm
