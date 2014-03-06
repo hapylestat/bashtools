@@ -16,7 +16,7 @@ General:
    - change libROOT variable path to place, where lib folder are located
 
 Optional:
-   - create symlink for in /usr/bin for  bashtools/lib/helpers/makescript
+   - create symlink in /usr/bin for  bashtools/lib/helpers/makescript
      This allow u to create new script from template and save a time
    - blank templates are located here bashtools/lib/helpers/templates and used 
      by makescript utility
