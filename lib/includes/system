@@ -157,4 +157,3 @@ function get_ssh_ip(){
  fi
  return_s $ip
 }
-

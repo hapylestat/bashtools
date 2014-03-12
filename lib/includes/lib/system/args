@@ -1,0 +1,42 @@
+#!/bin/bash
+
+#Some samples:
+#-iterate throught array and output keys
+#for item in ${!ARGS[@]}; do
+# echo $item
+#done
+#
+#-check switch element -a
+# if [ ! -z ${ARGS["a"]} ]; then
+#      some actions
+# fi
+
+#
+#Parse command line
+#
+function parseArgs(){
+ declare -gA ARGS #global declaration
+ ARGS["default"]=""
+
+ if [ ${#BASH_ARGV[@]} -eq 0 ]; then
+  return 0
+ fi
+
+ for item in ${BASH_ARGV[@]}; do
+  if [[ $item =~ ^-- ]]; then  # mydata="some value"
+    item=${item:2}
+    name=${item%=*}
+    value=${item#*=}
+    ARGS["${name,,}"]=$value
+  elif [[ $item =~ ^- ]]; then  # -v
+    ARGS["${item:1}"]="1"
+  else
+     ARGS["default"]=" $item${ARGS["default"]}"
+  fi
+ done
+  ARGS["default"]=${ARGS["default"]:1}
+}
+
+
+#parse script arguments
+parseArgs

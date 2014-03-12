@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #0. VARIABLES
 #=====bash color constants
 CORENAME="BashLib"
@@ -10,6 +9,13 @@ sSTOP=0
 sSTOP_TRY=0
 #set to 1, to eit on first error
 EXITONERROR=0
+
+### check bash version ###
+if ((${BASH_VERSINFO[0]} < 4)); then
+    echo "Sorry, but supported only bash version 4.x.x and higher"
+    exit 1
+fi
+####################################
 
 #checking required variables, try to guess defaults if nothing was set
 if [ -z $FILENAME ]; then
@@ -46,7 +52,12 @@ trap control_c SIGINT
 #  Include script to base file (safe function)
 # $1 - file
 include(){
-  for item in "$@";do
+  #pre-proccessing
+  DATA=${@//./\/}     #unmask net.test.section -> net/test/section
+  DATA=${DATA//,/\ }  #convert system.io, system.terminal -> system.io system.terminal
+  DATA=${DATA//\ \ /\ } #cleanup, remove double spaces
+
+  for item in $DATA;do
    #check, if we do not include a called file
     if [ "$FILENAME" == "$item" ]; then
      echo "Item \"$item\" can't be included itself"
