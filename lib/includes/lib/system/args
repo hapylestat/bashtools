@@ -37,7 +37,6 @@ function parseArgs(){
   fi
  done
   ARGS["default"]=${ARGS["default"]:1}
-  
 }
 
 

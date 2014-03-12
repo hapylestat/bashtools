@@ -6,7 +6,8 @@ APPVER="0.2b"
 . /etc/system.conf
 . $libROOT/functions
 
-include performance terminal system filesystem
+include terminal, system, filesystem
+include lib.system.performance
 
 start_perf_timer
 

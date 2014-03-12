@@ -17,3 +17,6 @@ function str_item(){
   done
   echo $out
 }
+
+# echo -e "\0342\0234\0223" - prints check
+# echo -e "\0342\0234\0227" - prints cross
