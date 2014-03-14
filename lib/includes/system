@@ -85,7 +85,7 @@ status_check(){
    #check, if appears critical error
    if [ $EXITONERROR -eq 1 ] && [ $LASTSTATUS -gt 0 ]; then
     echo -e "${COLOR_RED}[!]${COLOR_END} Critical error appears, exiting..."    
-    break;
+    exit 1
   fi
 }
 
