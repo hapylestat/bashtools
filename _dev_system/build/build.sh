@@ -12,37 +12,53 @@ APPVER="0.1b"
 . /etc/system.conf
 . $libROOT/functions
 
-include terminal filesystem system
+MODDIR="mods"
+
+include terminal,filesystem,system
+include lib.system.args
 
 EXITONERROR=1
-SCRIPTFILE=null
-#=============callbacks
 
-do_build(){
-    write_item "Starting build of" "$1"
-    include $2/$1
+do_list(){
+ include $MODDIR.$1
+ write_item "$1" "$APPNAME $APPVER"
+}
+
+go_list(){
+ dirlist_callback do_list "$MYDIR/$MODDIR" "."
+}
+
+go_build(){
+ include $MODDIR.${ARGS["app"]}
+ if [ ! -z ${ARGS["ver"]} ]; then
+  APPVER=${ARGS["ver"]}
+ fi
+ write_info "Building $APPNAME $APPVER..."
+ mod_main
+}
+
+go_help(){
+ echo "$FILENAME - list|build [--app=<name>] [--ver=<new version>]"
 }
 
 
-
-
-#=============main
-
-#check if any param are passed
-if [ ! -z $1 ]; then
-  if [ -e "$MYDIR/mods/$1.sh.disabled" ]; then
-     SCRIPTFILE="$MYDIR/mods/$1.sh.disabled"
-  fi
-  if [ -e "$MYDIR/mods/$1.sh" ]; then
-     SCRIPTFILE="$MYDIR/mods/$1.sh"
-  fi
-  #-----------------pass inside script arguments
-  ARG1=$2
-  ARG2=$3
-  write_item "Starting build of" "$1"
-  include $SCRIPTFILE
-  #--------------------------------------------
-else 
- dirlist_callback do_build "$MYDIR/mods" "sh"
-fi
+case "${ARGS["default"]}" in
+ list)
+     go_list
+     ;;
+ help)
+     go_help
+     ;;
+ build)
+     if [ -z ${ARGS["app"]} ]; then
+       write_error "Please specify app param"
+       go_help
+       exit 1
+     fi
+     go_build
+     ;;
+ *)
+     go_help
+     ;;
+esac
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-include constants/termcolor
+include constants.termcolor
 
 
 #functions
