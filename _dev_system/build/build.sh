@@ -19,6 +19,10 @@ include lib.system.args
 
 EXITONERROR=1
 
+if [ ! -z ${ARGS["noservice"]} ]; then
+  include lib.disableservice
+fi
+
 do_list(){
  include $MODDIR.$1
  write_item "$1" "$APPNAME $APPVER"
@@ -38,7 +42,12 @@ go_build(){
 }
 
 go_help(){
- echo "$FILENAME - list|build [--app=<name>] [--ver=<new version>]"
+ echo "$FILENAME - list|build [--app=<name>] [--ver=<new version>] [-noservice]"
+ echo "list - list available modules"
+ echo "build - build selected module"
+ echo "--app - module to build"
+ echo "--ver - build this version instead of default"
+ echo "-noservice - skip installation of service"
 }
 
 
