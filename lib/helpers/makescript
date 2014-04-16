@@ -20,22 +20,29 @@ MYDIR=${MYDIR%%/$FILENAME}
 libROOT=$MYDIR/../
 . $MYDIR/../functions
 
-include terminal system filesystem
+include terminal, system, filesystem, lib.system.args
 
-# $1 - filename
-if [ ! -z $1 ]; then
-  TLIST=$(dirlist "$MYDIR/templates" ".")
-  ITEM=0
-  echo "Available templates:"
-  for item in $TLIST; do
-   echo "$ITEM. $item"
-   LIST[$ITEM]=$item
-   ITEM=$(( $ITEM+1 ))
-  done
-  read -p "Select:" ITEM
+FILENAME=""
 
-  run "cp -f $MYDIR/templates/${LIST[$ITEM]} $PWD/$1" "Create script from template"
-  run "chmod u+x $PWD/$1" "Apply execute permissions"
+if [ -z ${ARGS["default"]} ];then
+ read -p "New file name(press ENTER without typing to cancel): " FILENAME
+ if [ -z $FILENAME ]; then
+   write_info "Syntax: $FILENAME <filename>"
+  exit 1
+ fi
 else 
-  write_info "Syntax: $FILENAME <filename>"
+ FILENAME=${ARGS["default"]}
 fi
+
+TLIST=$(dirlist "$MYDIR/templates" ".")
+ITEM=0
+write_header  "Available templates:"
+for item in $TLIST; do
+write_item "$ITEM" "$item"
+LIST[$ITEM]=$item
+ITEM=$(( $ITEM+1 ))
+done
+read -p "Select:" ITEM
+
+run "cp -f $MYDIR/templates/${LIST[$ITEM]} $PWD/$FILENAME" "Create script from template"
+run "chmod u+x $PWD/$FILENAME" "Apply execute permissions"
