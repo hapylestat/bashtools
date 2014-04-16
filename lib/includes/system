@@ -20,7 +20,7 @@ run(){
  USER=$3
  
  if [ ! -z $3 ]; then
-   EXEC="sudo -H -u $3 $EXEC"
+   EXEC="sudo -H -u $USER $EXEC"
    NAME="$NAME (under $USER)"
  fi
  
