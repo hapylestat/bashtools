@@ -1,0 +1,17 @@
+#!/bin/bash
+######################################
+#            Shell script            #
+# Author: H.L.                       #
+# TPL Version: 0.1                   #
+######################################
+
+#========================Global variables
+APPVER="0.1b"
+#=======================Include base library
+
+. /etc/system.conf
+. $libROOT/functions
+
+
+
+

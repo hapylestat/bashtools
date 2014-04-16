@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#================================[HEADER]====================================
+APPNAME=
+APPVER=
+BASEURL=
+ARCHIVE=tar.gz
+#=============================================================================
+FILENAME=$APPNAME-$APPVER.$ARCHIVE
+
+mod_main(){
+ if [ ! -f $srvDOWNDIR/$FILENAME ]; then
+  run "wget $BASEURL/$FILENAME -O $srvDOWNDIR/$FILENAME" "Download source"
+ else
+  echo "Source downloading skipped as allready downloaded"
+ fi
+
+ switch_dir $srvDOWNDIR
+ run "tar -xf $srvDOWNDIR/$FILENAME" "Prepare source"
+ switch_dir
+
+ run "rm -rf $srvDIR/$APPNAME && rm -rf $srvBINDIR/$APPNAME-$APPVER" "Cleanup...."
+ run "mkdir $srvBINDIR/$APPNAME-$APPVER && ln -s $srvBINDIR/$APPNAME-$APPVER $srvDIR/$APPNAME" "Make links"
+
+
+ switch_dir $srvDOWNDIR/$APPNAME-$APPVER
+
+ #==========compiling section, ru here your build commands/scripts
+ #run "./configure --prefix=$srvDIR/$APPNAME " "Make configuration"
+
+
+ run "make" "Compile project"
+ run "make install" "Install project"
+ switch_dir
+}
