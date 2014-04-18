@@ -14,33 +14,33 @@ GLOBALSTATUS=0
 run(){
  LASTCMD=$1
  #---------test status variable to exists or 0 set. in both variants status is disabled.
- 
+
  EXEC=$1
  NAME=$2
  USER=$3
- 
+
  if [ ! -z $3 ]; then
    EXEC="sudo -H -u $USER $EXEC"
    NAME="$NAME (under $USER)"
  fi
- 
+
  if [ "$2" != "null" ] && [ ! -z "$2" ]; then
   echo -n "$NAME..........."
  fi
 
- if [ "$2" == "null" ]; then
+ if [ -z "$2" ]; then
   eval $EXEC
  else
-  eval $EXEC >$RUNLOG 2>&1 
+  eval $EXEC >$RUNLOG 2>&1
  fi
 
  LASTSTATUS=$?
  GLOBALSTATUS=$(($GLOBALSTATUS+$LASTSTATUS))
- 
+
   if [ "$2" != "null" ] && [ ! -z "$2" ]; then
    status_check "$NAME"
   fi
-  
+
  return $?
 }
 
@@ -58,33 +58,33 @@ status_check(){
  RETSTAT=$LASTSTATUS
  #check app log availability, and if status is ok 0 remove it
  if [ $LASTSTATUS -eq 0 ] && [ -e $RUNLOG ]; then
-   rm -f $RUNLOG 
+   rm -f $RUNLOG
  fi
- 
+
  if [ ! -z $2 ]; then
-   MSG="$1..........." 
+   MSG="$1..........."
  fi
  if [ $RETSTAT = 0 ]; then
    echo -e "$MSG[$COLOR_LIME OK $COLOR_END]"
  else
    echo -e "$MSG[$COLOR_RED FAILED $COLOR_END]"
  fi
- 
+
  #check, if application start failed...
   if [ -e $RUNLOG ]; then
     #ToDo: add silent flag or so on, to give more options for output
     if [ $LASTSTATUS -gt 0 ] && [ $EXITONERROR -eq 1 ]; then
       echo -ne "Task '$1' echo: ${COLOR_RED}"
       cat $RUNLOG
-      echo -e "${COLOR_END}"    
+      echo -e "${COLOR_END}"
     fi
   #cleanup
-   rm -f $RUNLOG 
+   rm -f $RUNLOG
   fi
-  
+
    #check, if appears critical error
    if [ $EXITONERROR -eq 1 ] && [ $LASTSTATUS -gt 0 ]; then
-    echo -e "${COLOR_RED}[!]${COLOR_END} Critical error appears, exiting..."    
+    echo -e "${COLOR_RED}[!]${COLOR_END} Critical error appears, exiting..."
     exit 1
   fi
 }
@@ -115,7 +115,7 @@ function get_current_lastlog(){
 service_install(){
  TMPFILE=/lib/systemd/system/$1.service
  STYPE="simple"
- if [ ! -z $3 ]; then 
+ if [ ! -z $3 ]; then
   STYPE=$3
  fi
  rm -f $TMPFILE
@@ -124,7 +124,7 @@ service_install(){
  echo  "After=syslog.target network.target" >> $TMPFILE
  echo >>$TMPFILE
  echo "[Service]" >>$TMPFILE
- 
+
  echo "Type=$STYPE" >>$TMPFILE
  echo "ExecStart=$2" >>$TMPFILE
  if [ "$STYPE" == "oneshot" ]; then
@@ -153,7 +153,7 @@ function get_ssh_ip(){
  if [ ! -z "$SSH_CLIENT" ]; then
   ip=$SSH_CLIENT
   ip=${ip%% *}
-  
+
  fi
  return_s $ip
 }
