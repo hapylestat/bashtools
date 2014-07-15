@@ -1,5 +1,6 @@
 #!/bin/bash
 
+include strings
 #Some samples:
 #-iterate throught array and output keys
 #for item in ${!ARGS[@]}; do
@@ -14,8 +15,11 @@
 #
 #Parse command line
 #
-function parseArgs(){
- declare -gA ARGS #global declaration
+parseArgs(){
+ #global declaration
+ declare -gA ARGS
+ declare -gA ARGS_HELP
+
  ARGS["default"]=""
  ARGV=(${BASH_ARGV[*]})
  unset ARGV[0]
@@ -39,6 +43,60 @@ function parseArgs(){
   ARGS["default"]=${ARGS["default"]:1}
 }
 
+# $1 arg name
+# $2 arg description
+# $3, $4 arg is optional
+addArgument(){
+  name=$1
+  desc=$2
+  opt=0
+  var=0
+
+  if [ "$3" == "opt" ] || [ "$4" == "opt" ]; then opt=1;  fi
+  if [ "$3" == "var" ] || [ "$4" == "var" ]; then var=1;  fi
+
+  ARGS_HELP["$name"]="$desc;$opt;$var"
+}
+
+
+listHelp(){
+  "$ON_HELP"
+  LEFTSPACE="\t"
+  TOPLINE=""
+  TOPLINE_LEFT="$FILENAME, $APPVER\n"
+  TOPLINE_LEFT="${TOPLINE}Usage: $FILENAME"
+  MAINSWITCH=""
+  CONTENT=""
+
+  for item in ${!ARGS_HELP[@]}; do
+      desc=$(str_item "${ARGS_HELP[$item]}" ";" "1")
+      opt=$(str_item "${ARGS_HELP[$item]}" ";" "2")
+      var=$(str_item "${ARGS_HELP[$item]}" ";" "3")
+
+      CONTENT="$CONTENT$LEFTSPACE"
+
+      if [ "$opt" == "1" ]; then TOPLINE="$TOPLINE["; fi
+      if [ "$var" == "1" ]; then
+        TOPLINE="$TOPLINE--$item=$desc"
+        CONTENT="$CONTENT--$item"
+      else
+        TOPLINE="$TOPLINE-$item"
+        CONTENT="$CONTENT-$item"
+      fi
+      if [ "$opt" == "1" ]; then TOPLINE="$TOPLINE]"; fi
+
+      if [ "$opt" == "0" ] && [ "$var" == "0" ]; then
+        MAINSWITCH="$MAINSWITCH$item|"
+      else
+        TOPLINE="$TOPLINE "
+      fi
+
+      CONTENT="$CONTENT - $desc\n"
+  done
+
+  echo -e "$TOPLINE_LEFT {${MAINSWITCH%?}} $TOPLINE\n"
+  echo -e "$CONTENT"
+}
 
 #parse script arguments
 parseArgs

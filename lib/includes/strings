@@ -2,10 +2,10 @@
 
 
 # => get string item by delimiter
-# $1 - string 
+# $1 - string
 # $2 - delimiter
 # $3 - item num
-function str_item(){
+str_item(){
   temp=$(echo $1)
   out="none"
   delim=$2
@@ -19,4 +19,11 @@ function str_item(){
 }
 
 # echo -e "\0342\0234\0223" - prints check
+print_check(){
+  echo -ne "\0342\0234\0223"
+}
+
 # echo -e "\0342\0234\0227" - prints cross
+print_cross(){
+  echo -ne "\0342\0234\0227"
+}
