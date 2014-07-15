@@ -58,8 +58,29 @@ addArgument(){
   ARGS_HELP["$name"]="$desc;$opt;$var"
 }
 
+# How to use
+#=================
+# 1. declare function
+# init_help(){
+#  addArgument "module" "module name to test" "var"
+#  addArgument "full" "execute full set of tests" "opt"
+#  addArgument "X" "enable eXtended/debug output" "opt"
+#  addArgument "list" "list of available modules" "opt"
+#  addArgument "test" "test package"
+#  addArgument "list" "test package"
+#}
+#
+#2. bind to handler
+#  export ON_NELP=init_help
+#
+#3. Call help output when needed
+# listHelp
 
 listHelp(){
+  if [ -z $ON_HELP ]; then
+    echo "Error. Please, define first argument handler via export ON_HELP=<function to fill arguments>"
+    exit 1
+  fi
   "$ON_HELP"
   LEFTSPACE="\t"
   TOPLINE=""
