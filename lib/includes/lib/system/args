@@ -51,11 +51,16 @@ addArgument(){
   desc=$2
   opt=0
   var=0
-
+  sw=0
+  if [ ! -z "${ARGS_HELP[$1]}" ]; then
+    echo "Error, param \"$1\" allready exists"
+    exit 1
+  fi
   if [ "$3" == "opt" ] || [ "$4" == "opt" ]; then opt=1;  fi
   if [ "$3" == "var" ] || [ "$4" == "var" ]; then var=1;  fi
+  if [ "$3" == "sw" ] || [ "$4" == "sw" ]; then sw=1;  fi
 
-  ARGS_HELP["$name"]="$desc;$opt;$var"
+  ARGS_HELP["$name"]="$desc;$opt;$var;$sw"
 }
 
 # How to use
@@ -93,6 +98,7 @@ listHelp(){
       desc=$(str_item "${ARGS_HELP[$item]}" ";" "1")
       opt=$(str_item "${ARGS_HELP[$item]}" ";" "2")
       var=$(str_item "${ARGS_HELP[$item]}" ";" "3")
+      sw=$(str_item "${ARGS_HELP[$item]}" ";" "4")
 
       CONTENT="$CONTENT$LEFTSPACE"
 
@@ -100,14 +106,17 @@ listHelp(){
       if [ "$var" == "1" ]; then
         TOPLINE="$TOPLINE--$item=$desc"
         CONTENT="$CONTENT--$item"
-      else
+      fi
+
+      if [ "$sw" == "1" ]; then
         TOPLINE="$TOPLINE-$item"
         CONTENT="$CONTENT-$item"
       fi
       if [ "$opt" == "1" ]; then TOPLINE="$TOPLINE]"; fi
 
-      if [ "$opt" == "0" ] && [ "$var" == "0" ]; then
+      if [ "$opt" == "0" ] && [ "$var" == "0" ] && [ "$sw" == "0" ]; then
         MAINSWITCH="$MAINSWITCH$item|"
+         CONTENT="$CONTENT$item"
       else
         TOPLINE="$TOPLINE "
       fi
@@ -115,7 +124,11 @@ listHelp(){
       CONTENT="$CONTENT - $desc\n"
   done
 
-  echo -e "$TOPLINE_LEFT {${MAINSWITCH%?}} $TOPLINE\n"
+  if [ "$MAINSWITCH" == "" ]; then
+    echo -e "$TOPLINE_LEFT $TOPLINE\n"
+  else
+    echo -e "$TOPLINE_LEFT {${MAINSWITCH%?}} $TOPLINE\n"
+  fi
   echo -e "$CONTENT"
 }
 
